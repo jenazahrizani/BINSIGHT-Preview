@@ -1,0 +1,4192 @@
+﻿---
+const BASE_URL = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
+
+const siteHref = (path: string) => {
+  if (
+    path.startsWith("http://") ||
+    path.startsWith("https://") ||
+    path.startsWith("mailto:") ||
+    path.startsWith("tel:") ||
+    path.startsWith("#") ||
+    path.startsWith("data:") ||
+    path.startsWith("javascript:")
+  ) {
+    return path;
+  }
+
+  if (path === "/") return `${BASE_URL}/`;
+  return `${BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+};
+
+const services = [
+  {
+    no: "01",
+    eyebrow: "GEOGRAPHY",
+    title: "Peta Persampahan",
+    text: "Temukan informasi melalui lokasi, wilayah, dan konteks tempat di Kabupaten Badung.",
+    href: "/map",
+    className: "route-map",
+  },
+  {
+    no: "02",
+    eyebrow: "INTELLIGENCE",
+    title: "Data & Informasi",
+    text: "Baca informasi publik melalui susunan data yang lebih jelas, terarah, dan mudah ditelusuri.",
+    href: "/dashboard",
+    className: "route-data",
+  },
+  {
+    no: "03",
+    eyebrow: "ECOSYSTEM",
+    title: "Organisasi",
+    text: "Kenali pihak, komunitas, institusi, dan jaringan yang hadir dalam ekosistem persampahan.",
+    href: "/organizations",
+    className: "route-network",
+  },
+  {
+    no: "04",
+    eyebrow: "MATERIAL",
+    title: "Kategori Sampah",
+    text: "Pahami perbedaan kategori material dan mengapa setiap material membutuhkan konteks yang berbeda.",
+    href: "/waste",
+    className: "route-material",
+  },
+];
+
+const areas = [
+  { no: "01", name: "Badung", type: "KABUPATEN", state: "TERSEDIA", meta: "WILAYAH UTAMA" },
+  { no: "02", name: "Mengwi", type: "KECAMATAN", state: "CONTOH", meta: "KONTEKS LOKAL" },
+  { no: "03", name: "Abiansemal", type: "KECAMATAN", state: "CONTOH", meta: "KONTEKS LOKAL" },
+];
+
+const materials = [
+  { no: "01", code: "ORG", name: "Organik", desc: "Material berbasis hayati." },
+  { no: "02", code: "ANR", name: "Anorganik", desc: "Material non-organik." },
+  { no: "03", code: "B3", name: "Bahan Berbahaya", desc: "Material dengan perhatian khusus." },
+  { no: "04", code: "ELK", name: "Elektronik", desc: "Perangkat dan komponennya." },
+  { no: "05", code: "RES", name: "Residu", desc: "Material setelah pemilahan." },
+];
+
+const principles = [
+  { no: "01", title: "Kontekstual", text: "Informasi ditempatkan bersama lokasi, wilayah, material, dan relasi yang membantu membentuk maknanya." },
+  { no: "02", title: "Terbuka", text: "Informasi publik disusun agar mudah ditemukan, dibaca, dan digunakan oleh masyarakat." },
+  { no: "03", title: "Bertanggung jawab", text: "Penyajian informasi memperhatikan sumber, konteks, keterbatasan, dan cara penggunaannya." },
+];
+
+const questions = [
+  { no: "01", q: "Di mana?", route: "PETA", href: "/map" },
+  { no: "02", q: "Apa yang tersedia?", route: "DATA", href: "/dashboard" },
+  { no: "03", q: "Siapa yang terlibat?", route: "ORGANISASI", href: "/organizations" },
+  { no: "04", q: "Material apa?", route: "MATERIAL", href: "/waste" },
+];
+
+const stats = [
+  { value: "01", label: "PLATFORM", note: "Satu ruang informasi" },
+  { value: "04", label: "PERSPEKTIF", note: "Place / Data / People / Material" },
+  { value: "05", label: "MATERIAL", note: "Kategori dasar" },
+  { value: "24/7", label: "PUBLIC", note: "Dapat diakses kapan saja" },
+];
+
+const currentYear = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#101311" />
+    <meta name="description" content="BINSIGHT â€” Badung Waste Intelligence. Platform informasi persampahan Kabupaten Badung." />
+    <title>BINSIGHT â€” Badung Waste Intelligence</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div class="app" data-page>
+      <div class="loader" data-loader aria-hidden="true">
+        <div class="loader__top">
+          <span>BINSIGHT</span>
+          <span>PUBLIC INFORMATION PLATFORM</span>
+        </div>
+        <div class="loader__center">
+          <span class="loader__percent" data-loader-percent>0</span>
+          <span>%</span>
+        </div>
+        <div class="loader__bottom">
+          <span>BADUNG / BALI</span>
+          <span>INITIALIZING CONTEXT</span>
+        </div>
+      </div>
+
+      <div class="noise" aria-hidden="true"></div>
+      <div class="progress" data-progress aria-hidden="true"><span></span></div>
+
+      <header class="site-header" data-header>
+        <div class="container header-inner">
+          <a class="brand" href={siteHref("/")} aria-label="BINSIGHT beranda">
+            <span class="brand__glyph" aria-hidden="true">
+              <i></i><i></i><i></i><i></i>
+            </span>
+            <span class="brand__text">
+              <strong>BINSIGHT</strong>
+              <small>BADUNG WASTE INTELLIGENCE</small>
+            </span>
+          </a>
+
+          <nav class="main-nav" aria-label="Navigasi utama">
+            <a class="is-active" href={siteHref("/")}><span>01</span>Beranda</a>
+            <a href={siteHref("/map")}><span>02</span>Peta</a>
+            <a href={siteHref("/dashboard")}><span>03</span>Data</a>
+            <a href={siteHref("/organizations")}><span>04</span>Organisasi</a>
+            <a href="#about"><span>05</span>Tentang</a>
+          </nav>
+
+          <div class="header-tools">
+            <span class="header-tools__place">BADUNG / BALI</span>
+            <button class="menu" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Buka menu">
+              <span class="menu__bars"><i></i><i></i><i></i></span>
+              <span class="menu__close">Ã—</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="mobile-menu" id="mobile-menu">
+          <div class="container mobile-menu__inner">
+            <div class="mobile-menu__intro">
+              <span>NAVIGATION</span>
+              <strong>BINSIGHT / 2026</strong>
+            </div>
+            <nav aria-label="Navigasi mobile">
+              <a href={siteHref("/")}><span>01</span><strong>Beranda</strong><i>â†—</i></a>
+              <a href={siteHref("/map")}><span>02</span><strong>Peta</strong><i>â†—</i></a>
+              <a href={siteHref("/dashboard")}><span>03</span><strong>Data</strong><i>â†—</i></a>
+              <a href={siteHref("/organizations")}><span>04</span><strong>Organisasi</strong><i>â†—</i></a>
+              <a href="#about"><span>05</span><strong>Tentang</strong><i>â†“</i></a>
+            </nav>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <!-- HERO: entirely new visual language â€” architectural typography / kinetic poster -->
+        <section class="hero" data-section="hero">
+          <div class="hero__backdrop" aria-hidden="true">
+            <div class="hero-word hero-word--waste">WASTE</div>
+            <div class="hero-word hero-word--bali">BALI</div>
+            <div class="hero-line hero-line--a"></div>
+            <div class="hero-line hero-line--b"></div>
+            <div class="hero-line hero-line--c"></div>
+            <div class="hero-corner hero-corner--tl"></div>
+            <div class="hero-corner hero-corner--br"></div>
+          </div>
+
+          <div class="container hero__layout">
+            <div class="hero__rail">
+              <div class="hero__rail-top">
+                <span>01</span>
+                <span>06</span>
+              </div>
+              <div class="hero__rail-track"><span data-hero-track></span></div>
+              <div class="hero__rail-bottom">
+                <span>PUBLIC</span>
+                <span>PLATFORM</span>
+              </div>
+            </div>
+
+            <div class="hero__copy">
+              <div class="hero__meta">
+                <span class="eyebrow">BADUNG WASTE INTELLIGENCE</span>
+                <span class="eyebrow">A PUBLIC INFORMATION SYSTEM</span>
+              </div>
+
+              <div class="hero__title">
+                <p class="hero__small-title">KENALI</p>
+                <h1>
+                  <span>BADUNG</span>
+                  <span class="hero__title-accent">LEBIH UTUH.</span>
+                </h1>
+                <div class="hero__title-rule"></div>
+              </div>
+
+              <div class="hero__summary">
+                <p>
+                  BINSIGHT mempertemukan tempat, informasi, organisasi, dan material
+                  dalam satu pengalaman untuk memahami persampahan Kabupaten Badung.
+                </p>
+
+                <div class="hero__cta-row">
+                  <a class="button button--solid magnetic" href={siteHref("/map")}>
+                    <span>Masuk ke platform</span>
+                    <b>â†—</b>
+                  </a>
+                  <a class="button button--quiet" href="#about">
+                    <span>Pelajari pendekatannya</span>
+                    <b>â†“</b>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div class="hero__poster" data-tilt>
+              <div class="poster__frame"></div>
+              <div class="poster__top">
+                <span>BADUNG / 01</span>
+                <span>CONTEXT EDITION</span>
+              </div>
+
+              <div class="poster__field">
+                <div class="poster__vertical">INFORMATION / PLACE / PEOPLE / MATERIAL</div>
+                <div class="poster__letters" aria-hidden="true">
+                  <span>B</span><span>I</span><span>N</span><span>S</span><span>I</span><span>G</span><span>H</span><span>T</span>
+                </div>
+                <div class="poster__shape poster__shape--one"></div>
+                <div class="poster__shape poster__shape--two"></div>
+                <div class="poster__shape poster__shape--three"></div>
+                <div class="poster__shape poster__shape--four"></div>
+              </div>
+
+              <div class="poster__bottom">
+                <span>PUBLIC / OPEN / CONTEXTUAL</span>
+                <span>2026</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="container hero__footer">
+            <div class="hero__ticker" data-marquee>
+              <div class="hero__ticker-track">
+                <span>PLACE</span><i>Â·</i><span>DATA</span><i>Â·</i><span>PEOPLE</span><i>Â·</i><span>MATERIAL</span><i>Â·</i>
+                <span>PLACE</span><i>Â·</i><span>DATA</span><i>Â·</i><span>PEOPLE</span><i>Â·</i><span>MATERIAL</span><i>Â·</i>
+              </div>
+            </div>
+            <div class="hero__footer-note">
+              <span>SCROLL TO EXPLORE</span>
+              <span class="hero__scroll-arrow">â†“</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- INTRO -->
+        <section class="intro section-light" id="about" data-reveal-section>
+          <div class="container intro__head">
+            <div class="overline">02 / THE CONTEXT</div>
+            <div class="intro__headline">
+              <p class="eyebrow dark">TENTANG BINSIGHT</p>
+              <h2>Satu tempat untuk <span>melihat hubungan.</span></h2>
+            </div>
+          </div>
+
+          <div class="container intro__body">
+            <div class="intro__number" data-counter="02">02</div>
+            <div class="intro__statement">
+              <p class="lead">
+                Persampahan tidak berdiri sendiri. Ia selalu hadir bersama tempat,
+                manusia, organisasi, material, dan keputusan yang terjadi di sekitarnya.
+              </p>
+              <div class="intro__copy-grid">
+                <p>
+                  BINSIGHT hadir sebagai ruang informasi publik yang membuat konteks tersebut
+                  lebih mudah ditemukan dan dibaca. Pengguna dapat mulai dari satu pertanyaan,
+                  lalu bergerak ke informasi yang lebih luas.
+                </p>
+                <p>
+                  Pendekatannya sederhana: mulai dari yang ingin diketahui, temukan sumber
+                  informasinya, lalu lihat hubungan yang membentuk konteksnya.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="container intro__principle-strip">
+            <div class="principle-strip__item"><span>01</span><strong>FIND</strong><small>Temukan</small></div>
+            <div class="principle-strip__line"></div>
+            <div class="principle-strip__item"><span>02</span><strong>READ</strong><small>Pahami</small></div>
+            <div class="principle-strip__line"></div>
+            <div class="principle-strip__item"><span>03</span><strong>CONNECT</strong><small>Hubungkan</small></div>
+          </div>
+        </section>
+
+        <!-- EXPERIENCE -->
+        <section class="experience" data-reveal-section>
+          <div class="container">
+            <div class="section-intro section-intro--split">
+              <div class="overline overline--light">03 / EXPERIENCE</div>
+              <div>
+                <p class="eyebrow light">EMPAT PINTU MASUK</p>
+                <h2>Mulai dari<br /><em>pertanyaan Anda.</em></h2>
+                <p class="section-deck light-deck">
+                  BINSIGHT tidak memaksakan satu cara membaca. Pilih ruang yang paling dekat
+                  dengan informasi yang sedang Anda cari.
+                </p>
+              </div>
+            </div>
+
+            <div class="service-matrix">
+              {services.map((service) => (
+                <a class={`service-card ${service.className}`} href={siteHref(service.href)} data-hover-card>
+                  <div class="service-card__head">
+                    <span>{service.no}</span>
+                    <small>{service.eyebrow}</small>
+                    <b>â†—</b>
+                  </div>
+                  <div class="service-card__visual" aria-hidden="true">
+                    {service.className === "route-map" && (
+                      <svg viewBox="0 0 280 170" role="presentation">
+                        <path class="icon-stroke icon-stroke--major" d="M28 132 C50 102 45 80 78 65 S119 43 142 64 S170 117 199 88 S221 45 252 30" />
+                        <path class="icon-stroke" d="M21 104 C58 112 69 95 91 77 S130 32 168 53 S203 131 264 110" />
+                        <path class="icon-stroke icon-stroke--soft" d="M42 145 L100 121 L154 136 L219 103" />
+                        <circle class="icon-node" cx="78" cy="65" r="5" /><circle class="icon-node" cx="142" cy="64" r="5" /><circle class="icon-node" cx="199" cy="88" r="5" />
+                      </svg>
+                    )}
+                    {service.className === "route-data" && (
+                      <svg viewBox="0 0 280 170" role="presentation">
+                        <path class="icon-stroke" d="M28 140 H255" />
+                        <path class="icon-stroke" d="M42 120 V140 M87 92 V140 M132 108 V140 M177 66 V140 M222 47 V140" />
+                        <path class="icon-stroke icon-stroke--accent" d="M42 118 L87 90 L132 105 L177 63 L222 44" />
+                        <circle class="icon-node icon-node--accent" cx="42" cy="118" r="4" /><circle class="icon-node icon-node--accent" cx="87" cy="90" r="4" /><circle class="icon-node icon-node--accent" cx="132" cy="105" r="4" /><circle class="icon-node icon-node--accent" cx="177" cy="63" r="4" /><circle class="icon-node icon-node--accent" cx="222" cy="44" r="4" />
+                      </svg>
+                    )}
+                    {service.className === "route-network" && (
+                      <svg viewBox="0 0 280 170" role="presentation">
+                        <path class="icon-stroke" d="M62 46 L138 82 L221 43 M62 46 L73 129 L138 82 L210 128 L221 43" />
+                        <path class="icon-stroke icon-stroke--soft" d="M73 129 L221 43 M62 46 L210 128" />
+                        <circle class="network-node" cx="62" cy="46" r="12" /><circle class="network-node network-node--accent" cx="138" cy="82" r="15" /><circle class="network-node" cx="221" cy="43" r="12" /><circle class="network-node" cx="73" cy="129" r="12" /><circle class="network-node" cx="210" cy="128" r="12" />
+                      </svg>
+                    )}
+                    {service.className === "route-material" && (
+                      <svg viewBox="0 0 280 170" role="presentation">
+                        <rect class="material-block material-block--a" x="36" y="80" width="50" height="50" rx="25" />
+                        <rect class="material-block material-block--b" x="91" y="53" width="50" height="50" rx="6" transform="rotate(22 116 78)" />
+                        <rect class="material-block material-block--c" x="149" y="85" width="50" height="50" rx="50" />
+                        <rect class="material-block material-block--d" x="198" y="45" width="44" height="44" rx="4" transform="rotate(45 220 67)" />
+                        <path class="icon-stroke icon-stroke--soft" d="M48 138 H236" />
+                      </svg>
+                    )}
+                  </div>
+                  <div class="service-card__body">
+                    <h3>{service.title}</h3>
+                    <p>{service.text}</p>
+                  </div>
+                  <div class="service-card__foot">
+                    <span>OPEN MODULE</span>
+                    <span>{service.no} / 04</span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <!-- STATS -->
+        <section class="stats-band" data-reveal-section>
+          <div class="container stats-grid">
+            {stats.map((stat) => (
+              <div class="stat-cell">
+                <strong data-count-value={stat.value}>{stat.value}</strong>
+                <span>{stat.label}</span>
+                <small>{stat.note}</small>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- METHOD -->
+        <section class="method section-light" data-reveal-section>
+          <div class="container">
+            <div class="section-intro section-intro--split-dark">
+              <div class="overline">04 / METHOD</div>
+              <div>
+                <p class="eyebrow dark">CARA MEMBACA INFORMASI</p>
+                <h2>Baca perlahan.<br /><em>Hubungkan kemudian.</em></h2>
+                <p class="section-deck">
+                  Setiap pengguna dapat masuk dari kebutuhan yang berbeda. Struktur BINSIGHT membantu
+                  menjaga agar perjalanan dari pertanyaan ke konteks tetap terasa sederhana.
+                </p>
+              </div>
+            </div>
+
+            <div class="method-timeline">
+              <article class="timeline-item">
+                <div class="timeline-marker">01</div>
+                <div class="timeline-line"></div>
+                <div class="timeline-copy">
+                  <small>START</small>
+                  <h3>Temukan</h3>
+                  <p>Mulai dari lokasi, wilayah, data, organisasi, atau kategori material yang ingin Anda lihat.</p>
+                </div>
+                <div class="timeline-side">FIND</div>
+              </article>
+              <article class="timeline-item">
+                <div class="timeline-marker">02</div>
+                <div class="timeline-line"></div>
+                <div class="timeline-copy">
+                  <small>UNDERSTAND</small>
+                  <h3>Pahami</h3>
+                  <p>Perhatikan informasi yang tersedia dan lihat konteks yang membuatnya lebih berarti.</p>
+                </div>
+                <div class="timeline-side">READ</div>
+              </article>
+              <article class="timeline-item">
+                <div class="timeline-marker">03</div>
+                <div class="timeline-line"></div>
+                <div class="timeline-copy">
+                  <small>RELATE</small>
+                  <h3>Hubungkan</h3>
+                  <p>Hubungkan satu informasi dengan wilayah, orang, organisasi, dan material di sekitarnya.</p>
+                </div>
+                <div class="timeline-side">CONNECT</div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- QUESTIONS -->
+        <section class="questions" data-reveal-section>
+          <div class="container">
+            <div class="section-intro section-intro--questions">
+              <div class="overline overline--light">05 / QUESTION PATH</div>
+              <div>
+                <p class="eyebrow light">JIKA ANDA BINGUNG MULAI DARI MANA</p>
+                <h2>Pertanyaan yang <em>tepat</em><br />menentukan pintu masuk.</h2>
+              </div>
+            </div>
+
+            <div class="question-list">
+              {questions.map((item) => (
+                <a href={siteHref(item.href)} class="question-row">
+                  <span class="question-row__no">{item.no}</span>
+                  <strong>{item.q}</strong>
+                  <small>{item.route}</small>
+                  <span class="question-row__arrow">â†—</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <!-- COVERAGE -->
+        <section class="coverage section-light" data-reveal-section>
+          <div class="container">
+            <div class="section-intro section-intro--split-dark">
+              <div class="overline">06 / COVERAGE</div>
+              <div>
+                <p class="eyebrow dark">BADUNG / BALI</p>
+                <h2>Melihat wilayah<br /><em>dari dekat.</em></h2>
+                <p class="section-deck">
+                  Informasi dapat dilihat berdasarkan wilayah untuk menjaga konteks lokal tetap dekat dengan pengguna.
+                </p>
+              </div>
+            </div>
+
+            <div class="coverage-shell">
+              <div class="coverage-art" aria-label="Visual konteks wilayah">
+                <div class="coverage-art__header">
+                  <span>AREA INDEX / 03</span>
+                  <span>BADUNG, BALI</span>
+                </div>
+                <div class="territory" aria-hidden="true">
+                  <div class="territory__ring territory__ring--1"></div>
+                  <div class="territory__ring territory__ring--2"></div>
+                  <div class="territory__ring territory__ring--3"></div>
+                  <div class="territory__path territory__path--1"></div>
+                  <div class="territory__path territory__path--2"></div>
+                  <div class="territory__path territory__path--3"></div>
+                  <span class="territory__dot territory__dot--1">B</span>
+                  <span class="territory__dot territory__dot--2">M</span>
+                  <span class="territory__dot territory__dot--3">A</span>
+                  <div class="territory__label territory__label--1">BADUNG</div>
+                  <div class="territory__label territory__label--2">MENGWI</div>
+                  <div class="territory__label territory__label--3">ABIANSEMAL</div>
+                </div>
+                <div class="coverage-art__footer"><span>PUBLIC AREA CONTEXT</span><span>VIEW / MAP â†—</span></div>
+              </div>
+
+              <div class="area-directory">
+                <div class="directory-head"><span>NO.</span><span>WILAYAH</span><span>TYPE</span><span>STATE</span></div>
+                {areas.map((area) => (
+                  <a href={siteHref("/map")} class="directory-row">
+                    <span>{area.no}</span>
+                    <div><strong>{area.name}</strong><small>{area.meta}</small></div>
+                    <span>{area.type}</span>
+                    <span class="state">{area.state}</span>
+                  </a>
+                ))}
+                <a href={siteHref("/map")} class="directory-more"><span>OPEN FULL MAP</span><span>â†—</span></a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- MATERIAL -->
+        <section class="material-system" data-reveal-section>
+          <div class="container material-system__grid">
+            <div class="material-system__side">
+              <div class="overline overline--light">07 / MATERIAL</div>
+              <div class="material-system__index">M</div>
+              <p>Karakter material adalah bagian dari konteks yang perlu dipahami.</p>
+            </div>
+            <div class="material-system__main">
+              <p class="eyebrow light">KNOW THE MATERIAL</p>
+              <h2>Setiap material<br /><em>bercerita berbeda.</em></h2>
+              <p class="section-deck light-deck">
+                Kategori membantu pengguna membedakan karakter dasar material dan menempatkannya pada informasi yang lebih relevan.
+              </p>
+              <div class="material-list">
+                {materials.map((material) => (
+                  <a href={siteHref("/waste")} class="material-list__row">
+                    <span>{material.no}</span>
+                    <strong>{material.name}</strong>
+                    <small>{material.desc}</small>
+                    <b>{material.code}</b>
+                    <i>â†—</i>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PRINCIPLES -->
+        <section class="principles section-light" data-reveal-section>
+          <div class="container">
+            <div class="section-intro section-intro--split-dark">
+              <div class="overline">08 / PRINCIPLES</div>
+              <div>
+                <p class="eyebrow dark">DESIGNING FOR PUBLIC USE</p>
+                <h2>Dibangun untuk<br /><em>digunakan.</em></h2>
+                <p class="section-deck">Pengalaman informasi dijaga agar sederhana, relevan, terbuka, dan bertanggung jawab.</p>
+              </div>
+            </div>
+
+            <div class="principles-grid">
+              {principles.map((principle, index) => (
+                <article class="principle-card" data-hover-card>
+                  <div class="principle-card__top"><span>{principle.no}</span><span>0{index + 1} / 03</span></div>
+                  <div class={`principle-glyph principle-glyph--${index + 1}`} aria-hidden="true">
+                    {index === 0 && <><span></span><span></span><span></span></>}
+                    {index === 1 && <><span></span><span></span><span></span><span></span></>}
+                    {index === 2 && <><span></span><span></span><span></span></>}
+                  </div>
+                  <h3>{principle.title}</h3>
+                  <p>{principle.text}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <!-- REPORT -->
+        <section class="report-prompt" data-reveal-section>
+          <div class="container report-prompt__inner">
+            <div class="report-prompt__meta"><span>PUBLIC PARTICIPATION</span><span>09 / REPORT</span></div>
+            <div class="report-prompt__content">
+              <div>
+                <p class="eyebrow light">LIHAT SESUATU / LAPORKAN</p>
+                <h2>Informasi publik<br /><em>dibangun bersama.</em></h2>
+              </div>
+              <div class="report-prompt__action">
+                <p>Gunakan jalur laporan masyarakat untuk menyampaikan kondisi persampahan yang Anda temui.</p>
+                <a href={siteHref("/reports/create")} class="report-button magnetic"><span>Buat laporan masyarakat</span><b>â†—</b></a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- CLOSING -->
+        <section class="closing" data-reveal-section>
+          <div class="closing__giant" aria-hidden="true">BINSIGHT</div>
+          <div class="container closing__inner">
+            <div class="closing__top"><span>END / BINSIGHT</span><span>BADUNG WASTE INTELLIGENCE</span></div>
+            <div class="closing__main">
+              <p class="eyebrow">A PUBLIC INFORMATION PLATFORM FOR BADUNG</p>
+              <h2>Kenali.<br /><span>Pahami.</span><br />Jaga Badung.</h2>
+              <a href={siteHref("/map")} class="closing-link magnetic"><span>Jelajahi BINSIGHT</span><b>â†—</b></a>
+            </div>
+            <div class="closing__bottom"><span>PLACE / DATA / PEOPLE / MATERIAL</span><span>BADUNG / BALI / INDONESIA</span></div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="container footer__top">
+          <div class="footer__brand-block">
+            <a class="brand brand--footer" href={siteHref("/")} aria-label="BINSIGHT beranda">
+              <span class="brand__glyph" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+              <span class="brand__text"><strong>BINSIGHT</strong><small>BADUNG WASTE INTELLIGENCE</small></span>
+            </a>
+            <p>Platform informasi persampahan Kabupaten Badung.</p>
+          </div>
+          <div class="footer__links">
+            <div class="footer-col"><span>PLATFORM</span><a href={siteHref("/map")}>Peta</a><a href={siteHref("/dashboard")}>Data</a><a href={siteHref("/organizations")}>Organisasi</a><a href={siteHref("/waste")}>Material</a></div>
+            <div class="footer-col"><span>INFORMASI</span><a href="#about">Tentang BINSIGHT</a><a href={siteHref("/map")}>Eksplorasi</a><a href={siteHref("/reports/create")}>Buat laporan</a></div>
+            <div class="footer-col"><span>IDENTITY</span><strong>BADUNG / BALI</strong><small>PUBLIC INFORMATION PLATFORM</small></div>
+          </div>
+        </div>
+        <div class="container footer__bottom"><span>Â© {currentYear} BINSIGHT</span><span>BADUNG WASTE INTELLIGENCE</span><span>OPEN / PUBLIC / CONTEXTUAL</span></div>
+      </footer>
+
+      <a class="floating-report" href={siteHref("/reports/create")} aria-label="Buat laporan masyarakat">
+        <span class="floating-report__icon" aria-hidden="true">+</span>
+        <span class="floating-report__copy"><small>LAPORAN MASYARAKAT</small><strong>Buat laporan</strong></span>
+        <span class="floating-report__arrow" aria-hidden="true">â†—</span>
+      </a>
+
+      <div class="cursor cursor--outer" data-cursor-outer aria-hidden="true"></div>
+      <div class="cursor cursor--inner" data-cursor-inner aria-hidden="true"></div>
+    </div>
+
+    <script>
+      const body = document.body;
+      const loader = document.querySelector<HTMLElement>("[data-loader]");
+      const percent = document.querySelector<HTMLElement>("[data-loader-percent]");
+      const progress = document.querySelector<HTMLElement>("[data-progress] span");
+      const menuButton = document.querySelector<HTMLButtonElement>(".menu");
+      const mobileMenu = document.querySelector<HTMLElement>("#mobile-menu");
+      const header = document.querySelector<HTMLElement>("[data-header]");
+
+      const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+      const boot = async () => {
+        if (!loader || !percent) return;
+        let value = 0;
+        const tick = () => {
+          value += value < 55 ? 5 : value < 88 ? 4 : 2;
+          percent.textContent = String(Math.min(value, 100));
+          if (value < 100) window.setTimeout(tick, 18);
+        };
+        tick();
+        await sleep(460);
+        percent.textContent = "100";
+        await sleep(260);
+        loader.classList.add("is-done");
+        body.classList.add("is-ready");
+      };
+
+      const setMenu = (open: boolean) => {
+        if (!menuButton || !mobileMenu) return;
+        menuButton.setAttribute("aria-expanded", String(open));
+        menuButton.setAttribute("aria-label", open ? "Tutup menu" : "Buka menu");
+        mobileMenu.classList.toggle("is-open", open);
+        body.classList.toggle("menu-open", open);
+      };
+
+      menuButton?.addEventListener("click", () => {
+        const open = menuButton.getAttribute("aria-expanded") === "true";
+        setMenu(!open);
+      });
+
+      mobileMenu?.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => setMenu(false)));
+
+      const updateScroll = () => {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const amount = max > 0 ? (window.scrollY / max) * 100 : 0;
+        progress?.style.setProperty("width", `${amount}%`);
+        header?.classList.toggle("is-scrolled", window.scrollY > 18);
+      };
+
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -60px 0px" });
+
+      document.querySelectorAll("[data-reveal-section]").forEach((section) => revealObserver.observe(section));
+
+      const magnetic = document.querySelectorAll<HTMLElement>(".magnetic");
+      magnetic.forEach((el) => {
+        el.addEventListener("pointermove", (event) => {
+          const rect = el.getBoundingClientRect();
+          const x = event.clientX - rect.left - rect.width / 2;
+          const y = event.clientY - rect.top - rect.height / 2;
+          el.style.transform = `translate(${x * 0.08}px, ${y * 0.08}px)`;
+        });
+        el.addEventListener("pointerleave", () => { el.style.transform = "translate(0,0)"; });
+      });
+
+      const tiltCards = document.querySelectorAll<HTMLElement>("[data-tilt]");
+      tiltCards.forEach((card) => {
+        card.addEventListener("pointermove", (event) => {
+          const rect = card.getBoundingClientRect();
+          const px = (event.clientX - rect.left) / rect.width - 0.5;
+          const py = (event.clientY - rect.top) / rect.height - 0.5;
+          card.style.setProperty("--rx", `${py * -3}deg`);
+          card.style.setProperty("--ry", `${px * 3}deg`);
+        });
+        card.addEventListener("pointerleave", () => {
+          card.style.setProperty("--rx", "0deg");
+          card.style.setProperty("--ry", "0deg");
+        });
+      });
+
+      const cursorOuter = document.querySelector<HTMLElement>("[data-cursor-outer]");
+      const cursorInner = document.querySelector<HTMLElement>("[data-cursor-inner]");
+      let mouseX = window.innerWidth / 2;
+      let mouseY = window.innerHeight / 2;
+      let outerX = mouseX;
+      let outerY = mouseY;
+
+      window.addEventListener("pointermove", (event) => {
+        mouseX = event.clientX;
+        mouseY = event.clientY;
+        if (cursorInner) {
+          cursorInner.style.left = `${mouseX}px`;
+          cursorInner.style.top = `${mouseY}px`;
+        }
+      });
+
+      const cursorLoop = () => {
+        outerX += (mouseX - outerX) * 0.12;
+        outerY += (mouseY - outerY) * 0.12;
+        if (cursorOuter) {
+          cursorOuter.style.left = `${outerX}px`;
+          cursorOuter.style.top = `${outerY}px`;
+        }
+        requestAnimationFrame(cursorLoop);
+      };
+      cursorLoop();
+
+      document.querySelectorAll("a, button, [data-hover-card]").forEach((item) => {
+        item.addEventListener("pointerenter", () => body.classList.add("cursor-focus"));
+        item.addEventListener("pointerleave", () => body.classList.remove("cursor-focus"));
+      });
+
+      const heroTrack = document.querySelector<HTMLElement>("[data-hero-track]");
+      window.addEventListener("scroll", () => {
+        updateScroll();
+        const y = Math.min(window.scrollY * 0.16, 140);
+        heroTrack?.style.setProperty("height", `${Math.max(28, 160 - y)}px`);
+      }, { passive: true });
+
+      updateScroll();
+      boot();
+    </script>
+
+    <!-- ------------------------------------------------------------------
+         MOTION NOTES / 01
+         ------------------------------------------------------------------
+         The single-file architecture intentionally keeps the visual system
+         local to this preview route so it can be copied into an Astro page
+         without installing an icon package or importing additional UI code.
+         ------------------------------------------------------------------ -->
+    <!-- ------------------------------------------------------------------
+         HERO COMPOSITION / 02
+         ------------------------------------------------------------------
+         The single-file architecture intentionally keeps the visual system
+         local to this preview route so it can be copied into an Astro page
+         without installing an icon package or importing additional UI code.
+         ------------------------------------------------------------------ -->
+    <!-- ------------------------------------------------------------------
+         POSTER SYSTEM / 03
+         ------------------------------------------------------------------
+         The single-file architecture intentionally keeps the visual system
+         local to this preview route so it can be copied into an Astro page
+         without installing an icon package or importing additional UI code.
+         ------------------------------------------------------------------ -->
+    <!-- ------------------------------------------------------------------
+         SERVICE ICON SYSTEM / 04
+         ------------------------------------------------------------------
+         The single-file architecture intentionally keeps the visual system
+         local to this preview route so it can be copied into an Astro page
+         without installing an icon package or importing additional UI code.
+         ------------------------------------------------------------------ -->
+    <!-- ------------------------------------------------------------------
+         TYPOGRAPHIC SCALE / 05
+         ------------------------------------------------------------------
+         The single-file architecture intentionally keeps the visual system
+         local to this preview route so it can be copied into an Astro page
+         without installing an icon package or importing additional UI code.
+         ------------------------------------------------------------------ -->
+    <!-- ------------------------------------------------------------------
+         GRID RULES / 06
+         ------------------------------------------------------------------
+         The single-file architecture intentionally keeps the visual system
+         local to this preview route so it can be copied into an Astro page
+         without installing an icon package or importing additional UI code.
+         ------------------------------------------------------------------ -->
+    <!-- ------------------------------------------------------------------
+         SECTION RHYTHM / 07
+         ------------------------------------------------------------------
+         The single-file architecture intentionally keeps the visual system
+         local to this preview route so it can be copied into an Astro page
+         without installing an icon package or importing additional UI code.
+         ------------------------------------------------------------------ -->
+    <!-- ------------------------------------------------------------------
+         MOBILE BEHAVIOR / 08
+         ------------------------------------------------------------------
+         The single-file architecture intentionally keeps the visual system
+         local to this preview route so it can be copied into an Astro page
+         without installing an icon package or importing additional UI code.
+         ------------------------------------------------------------------ -->
+    <!-- ------------------------------------------------------------------
+         ACCESSIBILITY / 09
+         ------------------------------------------------------------------
+         The single-file architecture intentionally keeps the visual system
+         local to this preview route so it can be copied into an Astro page
+         without installing an icon package or importing additional UI code.
+         ------------------------------------------------------------------ -->
+    <!-- ------------------------------------------------------------------
+         INTERACTION NOTES / 10
+         ------------------------------------------------------------------
+         The single-file architecture intentionally keeps the visual system
+         local to this preview route so it can be copied into an Astro page
+         without installing an icon package or importing additional UI code.
+         ------------------------------------------------------------------ -->
+    <!-- ------------------------------------------------------------------
+         COLOR ROLES / 11
+         ------------------------------------------------------------------
+         The single-file architecture intentionally keeps the visual system
+         local to this preview route so it can be copied into an Astro page
+         without installing an icon package or importing additional UI code.
+         ------------------------------------------------------------------ -->
+    <!-- ------------------------------------------------------------------
+         PERFORMANCE NOTES / 12
+         ------------------------------------------------------------------
+         The single-file architecture intentionally keeps the visual system
+         local to this preview route so it can be copied into an Astro page
+         without installing an icon package or importing additional UI code.
+         ------------------------------------------------------------------ -->
+    <!-- ------------------------------------------------------------------
+         CONTENT HIERARCHY / 13
+         ------------------------------------------------------------------
+         The single-file architecture intentionally keeps the visual system
+         local to this preview route so it can be copied into an Astro page
+         without installing an icon package or importing additional UI code.
+         ------------------------------------------------------------------ -->
+    <!-- ------------------------------------------------------------------
+         PUBLIC PATHS / 14
+         ------------------------------------------------------------------
+         The single-file architecture intentionally keeps the visual system
+         local to this preview route so it can be copied into an Astro page
+         without installing an icon package or importing additional UI code.
+         ------------------------------------------------------------------ -->
+    <!-- ------------------------------------------------------------------
+         MAINTENANCE MAP / 15
+         ------------------------------------------------------------------
+         The single-file architecture intentionally keeps the visual system
+         local to this preview route so it can be copied into an Astro page
+         without installing an icon package or importing additional UI code.
+         ------------------------------------------------------------------ -->
+    <style>
+      :root {
+        --ink: #101311;
+        --ink-2: #161a17;
+        --ink-3: #202722;
+        --paper: #f2f0e9;
+        --paper-2: #e9e6dd;
+        --white: #fcfbf7;
+        --line: #c6c2b8;
+        --line-dark: rgba(255,255,255,.14);
+        --muted: #6d6a63;
+        --muted-dark: rgba(255,255,255,.55);
+        --green: #c7e454;
+        --green-2: #8fa92f;
+        --coral: #e46d50;
+        --page: 1320px;
+        --ease: cubic-bezier(.16,.84,.24,1);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        background: var(--ink);
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Inter", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      body.menu-open {
+        overflow: hidden;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button,
+      a {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .app {
+        min-height: 100vh;
+        position: relative;
+        overflow: clip;
+      }
+
+      .container {
+        width: min(calc(100% - 64px), var(--page));
+        margin-inline: auto;
+      }
+
+      .noise {
+        position: fixed;
+        inset: 0;
+        z-index: 120;
+        pointer-events: none;
+        opacity: .035;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E");
+      }
+
+      .progress {
+        position: fixed;
+        inset: 0 0 auto;
+        height: 2px;
+        z-index: 300;
+        pointer-events: none;
+        background: transparent;
+      }
+
+      .progress span {
+        width: 0;
+        height: 100%;
+        display: block;
+        background: var(--green);
+        box-shadow: 0 0 18px rgba(199,228,84,.45);
+      }
+
+      .loader {
+        position: fixed;
+        inset: 0;
+        z-index: 500;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        padding: 26px 32px;
+        background: var(--ink);
+        color: white;
+        transition: opacity .75s var(--ease), visibility .75s var(--ease);
+      }
+
+      .loader.is-done {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .loader__top,
+      .loader__bottom {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        font: 8px/1.3 "DM Mono", monospace;
+        letter-spacing: .1em;
+        color: rgba(255,255,255,.5);
+      }
+
+      .loader__center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--green);
+        font: 700 clamp(72px, 15vw, 180px)/.8 "Space Grotesk", sans-serif;
+        letter-spacing: -.08em;
+      }
+
+      .loader__center span:last-child {
+        font-size: .25em;
+        align-self: flex-start;
+        margin-top: 4vh;
+      }
+
+      /* HEADER */
+      .site-header {
+        position: fixed;
+        inset: 0 0 auto;
+        z-index: 250;
+        border-bottom: 1px solid rgba(255,255,255,.13);
+        color: white;
+        background: rgba(16,19,17,.18);
+        backdrop-filter: blur(16px);
+        transition: background .35s ease, color .35s ease, border-color .35s ease;
+      }
+
+      .site-header.is-scrolled {
+        background: rgba(16,19,17,.88);
+        border-color: rgba(255,255,255,.09);
+      }
+
+      .header-inner {
+        min-height: 78px;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 28px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        width: max-content;
+      }
+
+      .brand__glyph {
+        width: 28px;
+        height: 28px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 2px;
+        transform: rotate(45deg);
+        transition: transform .4s var(--ease);
+      }
+
+      .brand:hover .brand__glyph {
+        transform: rotate(135deg);
+      }
+
+      .brand__glyph i {
+        display: block;
+        background: white;
+      }
+
+      .brand__glyph i:nth-child(2) {
+        background: var(--green);
+      }
+
+      .brand__glyph i:nth-child(3) {
+        background: var(--coral);
+      }
+
+      .brand__glyph i:nth-child(4) {
+        background: rgba(255,255,255,.28);
+      }
+
+      .brand__text {
+        display: grid;
+        gap: 4px;
+      }
+
+      .brand__text strong {
+        font: 800 16px/1 "Space Grotesk", sans-serif;
+        letter-spacing: -.045em;
+      }
+
+      .brand__text small {
+        font: 7px/1 "DM Mono", monospace;
+        letter-spacing: .1em;
+        color: rgba(255,255,255,.46);
+      }
+
+      .main-nav {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 28px;
+      }
+
+      .main-nav a {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        color: rgba(255,255,255,.52);
+        font-size: 11px;
+        font-weight: 600;
+        transition: color .25s ease;
+      }
+
+      .main-nav a span {
+        color: rgba(255,255,255,.25);
+        font: 7px "DM Mono", monospace;
+      }
+
+      .main-nav a:hover,
+      .main-nav a.is-active {
+        color: white;
+      }
+
+      .main-nav a.is-active::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -12px;
+        height: 2px;
+        background: var(--green);
+        transform-origin: left;
+        animation: navIn .6s var(--ease) both;
+      }
+
+      .header-tools {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .header-tools__place {
+        font: 7px/1 "DM Mono", monospace;
+        letter-spacing: .11em;
+        color: rgba(255,255,255,.42);
+      }
+
+      .menu {
+        width: 42px;
+        height: 42px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255,255,255,.24);
+        background: transparent;
+        color: white;
+        cursor: pointer;
+      }
+
+      .menu__bars {
+        display: grid;
+        gap: 4px;
+      }
+
+      .menu__bars i {
+        width: 16px;
+        height: 1px;
+        display: block;
+        background: currentColor;
+      }
+
+      .menu__close {
+        display: none;
+        font-size: 24px;
+        line-height: 1;
+        font-weight: 300;
+      }
+
+      .menu[aria-expanded="true"] .menu__bars {
+        display: none;
+      }
+
+      .menu[aria-expanded="true"] .menu__close {
+        display: block;
+      }
+
+      .mobile-menu {
+        display: none;
+        border-top: 1px solid rgba(255,255,255,.09);
+        background: rgba(16,19,17,.97);
+      }
+
+      .mobile-menu.is-open {
+        display: block;
+      }
+
+      .mobile-menu__inner {
+        padding: 15px 0 25px;
+      }
+
+      .mobile-menu__intro {
+        display: flex;
+        justify-content: space-between;
+        color: rgba(255,255,255,.38);
+        font: 7px "DM Mono", monospace;
+        letter-spacing: .1em;
+        padding: 3px 0 12px;
+      }
+
+      .mobile-menu nav a {
+        min-height: 65px;
+        display: grid;
+        grid-template-columns: 38px 1fr auto;
+        align-items: center;
+        border-top: 1px solid rgba(255,255,255,.09);
+      }
+
+      .mobile-menu nav a span,
+      .mobile-menu nav a i {
+        color: rgba(255,255,255,.34);
+        font: 8px "DM Mono", monospace;
+      }
+
+      .mobile-menu nav a strong {
+        font: 700 25px/1 "Space Grotesk", sans-serif;
+        letter-spacing: -.04em;
+      }
+
+      /* HERO */
+      .hero {
+        position: relative;
+        min-height: 100svh;
+        padding: 122px 0 0;
+        background: var(--ink);
+        color: white;
+        overflow: clip;
+      }
+
+      .hero__backdrop {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .hero-word {
+        position: absolute;
+        font: 800 clamp(180px, 28vw, 510px)/.7 "Space Grotesk", sans-serif;
+        letter-spacing: -.11em;
+        color: transparent;
+        -webkit-text-stroke: 1px rgba(255,255,255,.075);
+        white-space: nowrap;
+        user-select: none;
+      }
+
+      .hero-word--waste {
+        right: -5vw;
+        top: 15vh;
+        animation: posterDrift 18s ease-in-out infinite alternate;
+      }
+
+      .hero-word--bali {
+        left: -3vw;
+        bottom: 4vh;
+        opacity: .7;
+        animation: posterDriftReverse 22s ease-in-out infinite alternate;
+      }
+
+      .hero-line {
+        position: absolute;
+        height: 1px;
+        background: rgba(255,255,255,.08);
+        transform-origin: left;
+      }
+
+      .hero-line--a {
+        width: 58vw;
+        left: 18%;
+        top: 38%;
+        transform: rotate(-14deg);
+      }
+
+      .hero-line--b {
+        width: 45vw;
+        right: -7%;
+        top: 67%;
+        transform: rotate(26deg);
+      }
+
+      .hero-line--c {
+        width: 50vw;
+        left: 4%;
+        bottom: 24%;
+        transform: rotate(4deg);
+      }
+
+      .hero-corner {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        border-color: rgba(255,255,255,.12);
+      }
+
+      .hero-corner--tl {
+        top: 19%;
+        left: 20px;
+        border-top: 1px solid;
+        border-left: 1px solid;
+      }
+
+      .hero-corner--br {
+        right: 20px;
+        bottom: 16%;
+        border-right: 1px solid;
+        border-bottom: 1px solid;
+      }
+
+      .hero__layout {
+        position: relative;
+        z-index: 2;
+        min-height: calc(100svh - 184px);
+        display: grid;
+        grid-template-columns: 52px minmax(0, 1.16fr) minmax(360px, .72fr);
+        gap: 38px;
+      }
+
+      .hero__rail {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 0 22px;
+        border-right: 1px solid rgba(255,255,255,.11);
+        color: rgba(255,255,255,.28);
+        font: 7px "DM Mono", monospace;
+        letter-spacing: .1em;
+      }
+
+      .hero__rail-top,
+      .hero__rail-bottom {
+        display: grid;
+        gap: 7px;
+        justify-items: center;
+      }
+
+      .hero__rail-top span:first-child {
+        color: var(--green);
+      }
+
+      .hero__rail-track {
+        width: 1px;
+        height: 160px;
+        position: relative;
+        background: rgba(255,255,255,.1);
+        overflow: hidden;
+      }
+
+      .hero__rail-track span {
+        width: 1px;
+        height: 160px;
+        display: block;
+        background: var(--green);
+        transition: height .2s ease;
+      }
+
+      .hero__copy {
+        min-width: 0;
+        padding: 44px 0 70px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .hero__meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .eyebrow {
+        margin: 0;
+        color: var(--green);
+        font: 8px/1.25 "DM Mono", monospace;
+        letter-spacing: .12em;
+      }
+
+      .eyebrow.dark {
+        color: var(--green-2);
+      }
+
+      .eyebrow.light {
+        color: var(--green);
+      }
+
+      .hero__title-wrap {
+        display: grid;
+      }
+
+      .hero__title {
+        padding-top: 16vh;
+      }
+
+      .hero__small-title {
+        margin: 0 0 12px;
+        color: rgba(255,255,255,.42);
+        font: 500 13px/1 "DM Mono", monospace;
+        letter-spacing: .06em;
+      }
+
+      .hero h1 {
+        max-width: 950px;
+        margin: 0;
+        font: 700 clamp(76px, 10.1vw, 152px)/.83 "Space Grotesk", sans-serif;
+        letter-spacing: -.085em;
+      }
+
+      .hero h1 > span {
+        display: block;
+        animation: titleIn 1.1s var(--ease) both;
+      }
+
+      .hero h1 > span:nth-child(2) {
+        color: var(--green);
+        animation-delay: .08s;
+      }
+
+      .hero__title-rule {
+        width: min(470px, 72%);
+        height: 1px;
+        margin-top: 30px;
+        background: rgba(255,255,255,.14);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero__title-rule::after {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 55%;
+        background: var(--green);
+        transform: translateX(-100%);
+        animation: ruleIn 1.3s .35s var(--ease) forwards;
+      }
+
+      .hero__summary {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 40px;
+        align-items: end;
+      }
+
+      .hero__summary p {
+        max-width: 500px;
+        margin: 0;
+        color: rgba(255,255,255,.58);
+        font-size: 15px;
+        line-height: 1.75;
+      }
+
+      .hero__cta-row {
+        display: flex;
+        gap: 9px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .button {
+        min-height: 50px;
+        padding: 0 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        font-size: 10px;
+        font-weight: 800;
+        transition: transform .25s var(--ease), background .2s ease, border-color .2s ease, color .2s ease;
+      }
+
+      .button b {
+        font: 400 17px/1 "DM Mono", monospace;
+      }
+
+      .button--solid {
+        background: var(--green);
+        color: var(--ink);
+      }
+
+      .button--solid:hover {
+        background: white;
+      }
+
+      .button--quiet {
+        border: 1px solid rgba(255,255,255,.17);
+        color: rgba(255,255,255,.76);
+      }
+
+      .button--quiet:hover {
+        border-color: rgba(255,255,255,.42);
+        color: white;
+      }
+
+      .hero__poster {
+        --rx: 0deg;
+        --ry: 0deg;
+        position: relative;
+        align-self: stretch;
+        margin: 30px 0 35px;
+        min-height: 560px;
+        padding: 18px;
+        border: 1px solid rgba(255,255,255,.14);
+        background: linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.015));
+        transform: perspective(1200px) rotateX(var(--rx)) rotateY(var(--ry));
+        transition: transform .25s ease;
+      }
+
+      .poster__frame {
+        position: absolute;
+        inset: 8px;
+        border: 1px solid rgba(255,255,255,.06);
+        pointer-events: none;
+      }
+
+      .poster__top,
+      .poster__bottom {
+        position: relative;
+        z-index: 3;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        color: rgba(255,255,255,.4);
+        font: 7px "DM Mono", monospace;
+        letter-spacing: .1em;
+      }
+
+      .poster__field {
+        position: absolute;
+        inset: 58px 25px 55px;
+        overflow: hidden;
+        background:
+          linear-gradient(90deg, transparent 0 24%, rgba(255,255,255,.045) 24% 24.2%, transparent 24.2% 49%, rgba(255,255,255,.045) 49% 49.2%, transparent 49.2% 74%, rgba(255,255,255,.045) 74% 74.2%, transparent 74.2%),
+          linear-gradient(0deg, transparent 0 24%, rgba(255,255,255,.035) 24% 24.2%, transparent 24.2% 49%, rgba(255,255,255,.035) 49% 49.2%, transparent 49.2% 74%, rgba(255,255,255,.035) 74% 74.2%, transparent 74.2%);
+      }
+
+      .poster__vertical {
+        position: absolute;
+        top: 50%;
+        right: -77px;
+        transform: rotate(90deg);
+        transform-origin: center;
+        color: rgba(255,255,255,.18);
+        font: 7px "DM Mono", monospace;
+        letter-spacing: .12em;
+        white-space: nowrap;
+      }
+
+      .poster__letters {
+        position: absolute;
+        left: -4px;
+        top: 42%;
+        display: grid;
+        gap: 0;
+        color: transparent;
+        -webkit-text-stroke: 1px rgba(255,255,255,.26);
+        font: 700 clamp(90px, 9vw, 138px)/.67 "Space Grotesk", sans-serif;
+        letter-spacing: -.09em;
+      }
+
+      .poster__letters span:nth-child(2n) {
+        color: rgba(255,255,255,.06);
+        -webkit-text-stroke: 0;
+      }
+
+      .poster__shape {
+        position: absolute;
+        border-radius: 999px;
+        transform-origin: center;
+      }
+
+      .poster__shape--one {
+        width: 120px;
+        height: 120px;
+        right: 16%;
+        top: 22%;
+        border: 1px solid rgba(199,228,84,.6);
+        animation: posterOrbit 12s linear infinite;
+      }
+
+      .poster__shape--two {
+        width: 8px;
+        height: 8px;
+        right: 35%;
+        top: 41%;
+        background: var(--green);
+        box-shadow: 0 0 0 9px rgba(199,228,84,.08), 0 0 22px rgba(199,228,84,.38);
+        animation: pulseDot 2.5s ease-in-out infinite;
+      }
+
+      .poster__shape--three {
+        width: 170px;
+        height: 1px;
+        right: 9%;
+        top: 63%;
+        background: var(--coral);
+        transform: rotate(-32deg);
+        animation: slashMove 5s ease-in-out infinite;
+      }
+
+      .poster__shape--four {
+        width: 160px;
+        height: 160px;
+        left: 16%;
+        bottom: 9%;
+        border: 1px dashed rgba(255,255,255,.16);
+        animation: spin 18s linear infinite reverse;
+      }
+
+      .hero__footer {
+        position: relative;
+        z-index: 3;
+        min-height: 64px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        border-top: 1px solid rgba(255,255,255,.12);
+        align-items: center;
+      }
+
+      .hero__ticker {
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      .hero__ticker-track {
+        display: inline-flex;
+        align-items: center;
+        gap: 16px;
+        min-width: max-content;
+        color: rgba(255,255,255,.55);
+        font: 8px "DM Mono", monospace;
+        letter-spacing: .09em;
+        animation: marquee 26s linear infinite;
+      }
+
+      .hero__ticker-track i {
+        color: var(--coral);
+        font-style: normal;
+      }
+
+      .hero__footer-note {
+        min-height: 64px;
+        padding-left: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-left: 1px solid rgba(255,255,255,.11);
+        color: rgba(255,255,255,.36);
+        font: 7px "DM Mono", monospace;
+        letter-spacing: .1em;
+      }
+
+      .hero__scroll-arrow {
+        color: var(--green);
+        font-size: 14px;
+        animation: nudge 1.8s ease-in-out infinite;
+      }
+
+      /* SHARED LIGHT */
+      .section-light {
+        background: var(--paper);
+        color: var(--ink);
+      }
+
+      .overline {
+        color: #7e7b73;
+        font: 8px "DM Mono", monospace;
+        letter-spacing: .11em;
+      }
+
+      .overline--light {
+        color: rgba(255,255,255,.3);
+      }
+
+      .section-intro {
+        display: grid;
+        gap: 40px;
+      }
+
+      .section-intro--split,
+      .section-intro--split-dark {
+        grid-template-columns: 180px minmax(0, 820px);
+      }
+
+      .section-intro--questions {
+        grid-template-columns: 180px minmax(0, 1fr);
+      }
+
+      .section-intro h2 {
+        max-width: 850px;
+        margin: 0;
+        font: 700 clamp(48px, 6vw, 82px)/.93 "Space Grotesk", sans-serif;
+        letter-spacing: -.07em;
+      }
+
+      .section-intro h2 em {
+        color: var(--green);
+        font-style: normal;
+      }
+
+      .section-light .section-intro h2 em {
+        color: var(--green-2);
+      }
+
+      .section-deck {
+        max-width: 560px;
+        margin: 24px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.8;
+      }
+
+      .light-deck {
+        color: rgba(255,255,255,.54);
+      }
+
+      /* INTRO */
+      .intro {
+        padding: 150px 0 128px;
+      }
+
+      .intro__head {
+        display: grid;
+        grid-template-columns: 180px minmax(0, 1fr);
+        gap: 40px;
+      }
+
+      .intro__headline h2 {
+        max-width: 940px;
+        margin: 16px 0 0;
+        font: 700 clamp(56px, 7vw, 92px)/.92 "Space Grotesk", sans-serif;
+        letter-spacing: -.075em;
+      }
+
+      .intro__headline h2 span {
+        color: var(--green-2);
+      }
+
+      .intro__body {
+        margin-top: 85px;
+        display: grid;
+        grid-template-columns: 180px minmax(0, 1fr);
+        gap: 40px;
+      }
+
+      .intro__number {
+        color: #b5b0a4;
+        font: 500 clamp(58px, 6vw, 84px)/.9 "DM Mono", monospace;
+        letter-spacing: -.08em;
+      }
+
+      .intro__statement {
+        max-width: 930px;
+      }
+
+      .lead {
+        max-width: 820px;
+        margin: 0;
+        font: 500 clamp(26px, 3vw, 43px)/1.18 "Space Grotesk", sans-serif;
+        letter-spacing: -.045em;
+      }
+
+      .intro__copy-grid {
+        max-width: 790px;
+        margin-top: 45px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 34px;
+      }
+
+      .intro__copy-grid p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.82;
+      }
+
+      .intro__principle-strip {
+        margin-top: 90px;
+        padding-top: 24px;
+        display: grid;
+        grid-template-columns: 1fr 1px 1fr 1px 1fr;
+        align-items: center;
+        border-top: 2px solid var(--ink);
+      }
+
+      .principle-strip__item {
+        min-height: 54px;
+        padding-right: 18px;
+        display: grid;
+        grid-template-columns: 34px auto 1fr;
+        align-items: center;
+        gap: 13px;
+      }
+
+      .principle-strip__item span {
+        color: var(--green-2);
+        font: 9px "DM Mono", monospace;
+      }
+
+      .principle-strip__item strong {
+        font: 700 12px "DM Mono", monospace;
+        letter-spacing: .03em;
+      }
+
+      .principle-strip__item small {
+        color: #89857d;
+        font-size: 11px;
+        justify-self: end;
+      }
+
+      .principle-strip__line {
+        height: 34px;
+        background: var(--line);
+      }
+
+      /* EXPERIENCE */
+      .experience {
+        padding: 145px 0 160px;
+        background: var(--ink);
+        color: white;
+      }
+
+      .experience .section-intro {
+        margin-bottom: 65px;
+      }
+
+      .service-matrix {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1px;
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.12);
+      }
+
+      .service-card {
+        position: relative;
+        min-height: 485px;
+        padding: 21px;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        background: var(--ink-2);
+        overflow: hidden;
+        transition: background .35s ease, transform .35s var(--ease);
+      }
+
+      .service-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.08), transparent 28%);
+        opacity: 0;
+        transition: opacity .35s ease;
+        pointer-events: none;
+      }
+
+      .service-card:hover::before {
+        opacity: 1;
+      }
+
+      .service-card:hover {
+        background: #1a201c;
+      }
+
+      .service-card__head,
+      .service-card__foot {
+        position: relative;
+        z-index: 2;
+        display: grid;
+        grid-template-columns: 44px 1fr auto;
+        align-items: center;
+        gap: 12px;
+        font: 7px "DM Mono", monospace;
+        letter-spacing: .08em;
+      }
+
+      .service-card__head > span {
+        color: var(--green);
+      }
+
+      .service-card__head small {
+        color: rgba(255,255,255,.38);
+      }
+
+      .service-card__head b,
+      .service-card__foot span:last-child {
+        justify-self: end;
+        font-weight: 400;
+        color: rgba(255,255,255,.4);
+      }
+
+      .service-card__visual {
+        position: relative;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+      }
+
+      .service-card__visual::after {
+        content: "";
+        position: absolute;
+        width: 170px;
+        height: 170px;
+        border: 1px solid rgba(255,255,255,.05);
+        border-radius: 50%;
+      }
+
+      .service-card__visual svg {
+        width: 82%;
+        max-width: 310px;
+        height: auto;
+        overflow: visible;
+        transition: transform .6s var(--ease);
+      }
+
+      .service-card:hover .service-card__visual svg {
+        transform: scale(1.05) rotate(-1deg);
+      }
+
+      .icon-stroke {
+        fill: none;
+        stroke: rgba(255,255,255,.28);
+        stroke-width: 1.25;
+        vector-effect: non-scaling-stroke;
+      }
+
+      .icon-stroke--major {
+        stroke: rgba(255,255,255,.65);
+        stroke-width: 1.5;
+      }
+
+      .icon-stroke--soft {
+        stroke: rgba(255,255,255,.11);
+      }
+
+      .icon-stroke--accent {
+        stroke: var(--green);
+        stroke-width: 2;
+      }
+
+      .icon-node {
+        fill: var(--green);
+        stroke: var(--ink-2);
+        stroke-width: 2;
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: nodeBlink 3s ease-in-out infinite;
+      }
+
+      .icon-node--accent {
+        fill: var(--coral);
+      }
+
+      .network-node {
+        fill: var(--ink-2);
+        stroke: rgba(255,255,255,.45);
+        stroke-width: 1.3;
+        vector-effect: non-scaling-stroke;
+      }
+
+      .network-node--accent {
+        fill: var(--green);
+        stroke: var(--green);
+      }
+
+      .material-block {
+        fill: rgba(255,255,255,.05);
+        stroke: rgba(255,255,255,.36);
+        stroke-width: 1;
+        vector-effect: non-scaling-stroke;
+        transform-box: fill-box;
+        transform-origin: center;
+      }
+
+      .material-block--b {
+        fill: rgba(228,109,80,.08);
+        stroke: var(--coral);
+      }
+
+      .material-block--c {
+        fill: rgba(199,228,84,.08);
+        stroke: var(--green);
+      }
+
+      .service-card__body {
+        position: relative;
+        z-index: 2;
+        max-width: 520px;
+        padding: 20px 0 32px;
+      }
+
+      .service-card__body h3 {
+        margin: 0;
+        font: 700 clamp(28px, 3vw, 40px)/1 "Space Grotesk", sans-serif;
+        letter-spacing: -.055em;
+      }
+
+      .service-card__body p {
+        max-width: 430px;
+        margin: 16px 0 0;
+        color: rgba(255,255,255,.48);
+        font-size: 13px;
+        line-height: 1.72;
+      }
+
+      .service-card__foot {
+        padding-top: 15px;
+        grid-template-columns: 1fr auto;
+        border-top: 1px solid rgba(255,255,255,.1);
+        color: rgba(255,255,255,.36);
+      }
+
+      .service-card__foot span:first-child {
+        color: rgba(255,255,255,.55);
+      }
+
+      /* STATS */
+      .stats-band {
+        background: var(--green);
+        color: var(--ink);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .stat-cell {
+        min-height: 160px;
+        padding: 25px 24px;
+        display: grid;
+        align-content: center;
+        gap: 6px;
+        border-right: 1px solid rgba(16,19,17,.18);
+      }
+
+      .stat-cell:last-child {
+        border-right: 0;
+      }
+
+      .stat-cell strong {
+        font: 700 clamp(34px, 4vw, 56px)/.9 "Space Grotesk", sans-serif;
+        letter-spacing: -.07em;
+      }
+
+      .stat-cell span {
+        font: 700 8px "DM Mono", monospace;
+        letter-spacing: .1em;
+      }
+
+      .stat-cell small {
+        color: rgba(16,19,17,.56);
+        font-size: 10px;
+      }
+
+      /* METHOD */
+      .method {
+        padding: 145px 0 155px;
+      }
+
+      .method .section-intro {
+        margin-bottom: 78px;
+      }
+
+      .method-timeline {
+        border-top: 2px solid var(--ink);
+      }
+
+      .timeline-item {
+        min-height: 245px;
+        display: grid;
+        grid-template-columns: 92px 1px minmax(0, 1fr) 130px;
+        gap: 26px;
+        align-items: stretch;
+        border-bottom: 1px solid var(--line);
+        position: relative;
+        transition: background .3s ease;
+      }
+
+      .timeline-item:hover {
+        background: rgba(16,19,17,.035);
+      }
+
+      .timeline-marker {
+        padding-top: 24px;
+        color: var(--green-2);
+        font: 10px "DM Mono", monospace;
+      }
+
+      .timeline-line {
+        width: 1px;
+        background: var(--line);
+      }
+
+      .timeline-copy {
+        padding: 27px 0 35px;
+      }
+
+      .timeline-copy small {
+        color: #8a867d;
+        font: 7px "DM Mono", monospace;
+        letter-spacing: .1em;
+      }
+
+      .timeline-copy h3 {
+        margin: 52px 0 13px;
+        font: 700 clamp(32px, 4vw, 50px)/.93 "Space Grotesk", sans-serif;
+        letter-spacing: -.055em;
+      }
+
+      .timeline-copy p {
+        max-width: 520px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.76;
+      }
+
+      .timeline-side {
+        align-self: end;
+        padding-bottom: 31px;
+        color: #8a867d;
+        font: 8px "DM Mono", monospace;
+        letter-spacing: .1em;
+        text-align: right;
+      }
+
+      /* QUESTIONS */
+      .questions {
+        padding: 142px 0 155px;
+        background: var(--ink-2);
+        color: white;
+      }
+
+      .question-list {
+        margin-top: 62px;
+        border-top: 1px solid rgba(255,255,255,.16);
+      }
+
+      .question-row {
+        min-height: 110px;
+        display: grid;
+        grid-template-columns: 70px minmax(0,1fr) 150px 38px;
+        align-items: center;
+        gap: 18px;
+        border-bottom: 1px solid rgba(255,255,255,.1);
+        transition: padding .35s var(--ease), background .25s ease;
+      }
+
+      .question-row:hover {
+        padding-inline: 18px;
+        background: rgba(255,255,255,.035);
+      }
+
+      .question-row__no {
+        color: rgba(255,255,255,.3);
+        font: 9px "DM Mono", monospace;
+      }
+
+      .question-row strong {
+        font: 600 clamp(22px, 3vw, 34px)/1 "Space Grotesk", sans-serif;
+        letter-spacing: -.045em;
+      }
+
+      .question-row small,
+      .question-row__arrow {
+        color: rgba(255,255,255,.34);
+        font: 8px "DM Mono", monospace;
+        letter-spacing: .07em;
+      }
+
+      .question-row__arrow {
+        justify-self: end;
+        color: var(--green);
+        font-size: 16px;
+      }
+
+      /* COVERAGE */
+      .coverage {
+        padding: 145px 0 160px;
+      }
+
+      .coverage .section-intro {
+        margin-bottom: 75px;
+      }
+
+      .coverage-shell {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(360px, .95fr);
+        gap: 1px;
+        background: var(--ink);
+        border: 1px solid var(--ink);
+      }
+
+      .coverage-art {
+        min-height: 530px;
+        padding: 20px;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        background: var(--ink-2);
+        color: white;
+      }
+
+      .coverage-art__header,
+      .coverage-art__footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        color: rgba(255,255,255,.38);
+        font: 7px "DM Mono", monospace;
+        letter-spacing: .08em;
+      }
+
+      .territory {
+        position: relative;
+        min-height: 410px;
+        overflow: hidden;
+      }
+
+      .territory__ring {
+        position: absolute;
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .territory__ring--1 {
+        width: 270px;
+        height: 270px;
+        left: 48%;
+        top: 50%;
+        animation: pulseRing 5s ease-in-out infinite;
+      }
+
+      .territory__ring--2 {
+        width: 410px;
+        height: 410px;
+        left: 48%;
+        top: 50%;
+      }
+
+      .territory__ring--3 {
+        width: 560px;
+        height: 560px;
+        left: 48%;
+        top: 50%;
+        border-style: dashed;
+        animation: spin 28s linear infinite;
+      }
+
+      .territory__path {
+        position: absolute;
+        height: 1px;
+        background: rgba(255,255,255,.2);
+        transform-origin: left center;
+      }
+
+      .territory__path--1 {
+        width: 330px;
+        left: 28%;
+        top: 34%;
+        transform: rotate(16deg);
+      }
+
+      .territory__path--2 {
+        width: 290px;
+        left: 38%;
+        top: 58%;
+        transform: rotate(-31deg);
+      }
+
+      .territory__path--3 {
+        width: 260px;
+        left: 24%;
+        top: 71%;
+        transform: rotate(12deg);
+      }
+
+      .territory__dot {
+        position: absolute;
+        width: 33px;
+        height: 33px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(255,255,255,.55);
+        border-radius: 50%;
+        background: var(--ink-2);
+        color: white;
+        font: 8px "DM Mono", monospace;
+        transition: transform .25s ease, background .25s ease, color .25s ease;
+      }
+
+      .territory__dot:hover {
+        transform: scale(1.18);
+        background: var(--green);
+        color: var(--ink);
+      }
+
+      .territory__dot--1 { left: 31%; top: 28%; }
+      .territory__dot--2 { left: 61%; top: 52%; }
+      .territory__dot--3 { left: 44%; top: 70%; }
+
+      .territory__label {
+        position: absolute;
+        color: rgba(255,255,255,.32);
+        font: 7px "DM Mono", monospace;
+        letter-spacing: .08em;
+      }
+
+      .territory__label--1 { left: 25%; top: 20%; }
+      .territory__label--2 { left: 66%; top: 45%; }
+      .territory__label--3 { left: 38%; top: 77%; }
+
+      .area-directory {
+        background: var(--white);
+        color: var(--ink);
+      }
+
+      .directory-head,
+      .directory-row {
+        display: grid;
+        grid-template-columns: 44px minmax(0,1fr) 110px 95px;
+        gap: 14px;
+        align-items: center;
+      }
+
+      .directory-head {
+        min-height: 50px;
+        padding: 0 22px;
+        border-bottom: 1px solid var(--line);
+        color: #88847c;
+        font: 7px "DM Mono", monospace;
+        letter-spacing: .08em;
+      }
+
+      .directory-row {
+        min-height: 110px;
+        padding: 0 22px;
+        border-bottom: 1px solid var(--line);
+        transition: background .25s ease, padding .25s var(--ease);
+      }
+
+      .directory-row:hover {
+        padding-left: 30px;
+        background: var(--paper);
+      }
+
+      .directory-row > span:first-child,
+      .directory-row > span:nth-child(3),
+      .directory-row > span:last-child {
+        color: #8b877f;
+        font: 8px "DM Mono", monospace;
+      }
+
+      .directory-row strong {
+        display: block;
+        font: 600 25px/1 "Space Grotesk", sans-serif;
+        letter-spacing: -.04em;
+      }
+
+      .directory-row small {
+        display: block;
+        margin-top: 7px;
+        color: #969189;
+        font: 7px "DM Mono", monospace;
+        letter-spacing: .05em;
+      }
+
+      .directory-row .state {
+        color: var(--green-2);
+      }
+
+      .directory-more {
+        min-height: 72px;
+        padding: 0 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font: 8px "DM Mono", monospace;
+        letter-spacing: .08em;
+      }
+
+      .directory-more span:last-child {
+        color: var(--coral);
+        font-size: 15px;
+      }
+
+      /* MATERIAL */
+      .material-system {
+        padding: 145px 0 160px;
+        background: var(--ink);
+        color: white;
+      }
+
+      .material-system__grid {
+        display: grid;
+        grid-template-columns: 180px minmax(0,1fr);
+        gap: 40px;
+      }
+
+      .material-system__side {
+        display: grid;
+        align-content: start;
+        gap: 95px;
+      }
+
+      .material-system__index {
+        width: 92px;
+        height: 92px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(255,255,255,.15);
+        color: var(--green);
+        font: 700 44px/1 "Space Grotesk", sans-serif;
+      }
+
+      .material-system__side p {
+        max-width: 160px;
+        margin: 0;
+        color: rgba(255,255,255,.4);
+        font-size: 11px;
+        line-height: 1.7;
+      }
+
+      .material-system__main h2 {
+        max-width: 760px;
+        margin: 16px 0 0;
+        font: 700 clamp(52px, 6.5vw, 86px)/.91 "Space Grotesk", sans-serif;
+        letter-spacing: -.075em;
+      }
+
+      .material-system__main h2 em {
+        color: var(--green);
+        font-style: normal;
+      }
+
+      .material-list {
+        margin-top: 68px;
+        border-top: 1px solid rgba(255,255,255,.15);
+      }
+
+      .material-list__row {
+        min-height: 92px;
+        display: grid;
+        grid-template-columns: 50px minmax(190px, .65fr) minmax(200px, 1fr) 70px 30px;
+        gap: 15px;
+        align-items: center;
+        border-bottom: 1px solid rgba(255,255,255,.1);
+        transition: background .25s ease, padding .3s var(--ease);
+      }
+
+      .material-list__row:hover {
+        padding-inline: 15px;
+        background: rgba(255,255,255,.035);
+      }
+
+      .material-list__row > span,
+      .material-list__row small,
+      .material-list__row b,
+      .material-list__row i {
+        font: 8px "DM Mono", monospace;
+        color: rgba(255,255,255,.34);
+        letter-spacing: .05em;
+      }
+
+      .material-list__row strong {
+        font: 600 21px "Space Grotesk", sans-serif;
+        letter-spacing: -.03em;
+      }
+
+      .material-list__row b {
+        color: var(--green);
+        text-align: right;
+      }
+
+      .material-list__row i {
+        justify-self: end;
+        color: var(--coral);
+        font-style: normal;
+        font-size: 15px;
+      }
+
+      /* PRINCIPLES */
+      .principles {
+        padding: 145px 0 155px;
+      }
+
+      .principles .section-intro {
+        margin-bottom: 74px;
+      }
+
+      .principles-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0,1fr));
+        border-top: 2px solid var(--ink);
+      }
+
+      .principle-card {
+        min-height: 420px;
+        padding: 23px 28px 34px 0;
+        border-right: 1px solid var(--line);
+        transition: background .3s ease, padding .3s var(--ease);
+      }
+
+      .principle-card + .principle-card {
+        padding-left: 28px;
+      }
+
+      .principle-card:last-child {
+        border-right: 0;
+      }
+
+      .principle-card:hover {
+        background: rgba(16,19,17,.025);
+      }
+
+      .principle-card__top {
+        display: flex;
+        justify-content: space-between;
+        color: #8a867d;
+        font: 8px "DM Mono", monospace;
+      }
+
+      .principle-card__top span:first-child {
+        color: var(--green-2);
+      }
+
+      .principle-glyph {
+        position: relative;
+        height: 115px;
+        margin-top: 55px;
+        overflow: hidden;
+      }
+
+      .principle-glyph span {
+        position: absolute;
+        display: block;
+      }
+
+      .principle-glyph--1 span:nth-child(1) {
+        width: 74px;
+        height: 74px;
+        left: 4%;
+        top: 20%;
+        border: 1px solid var(--ink);
+        border-radius: 50%;
+        animation: glyphFloat 5s ease-in-out infinite;
+      }
+
+      .principle-glyph--1 span:nth-child(2) {
+        width: 44px;
+        height: 44px;
+        left: 24%;
+        top: 0;
+        background: var(--green);
+        border-radius: 50%;
+        mix-blend-mode: multiply;
+      }
+
+      .principle-glyph--1 span:nth-child(3) {
+        width: 190px;
+        height: 1px;
+        left: 2%;
+        top: 65%;
+        background: var(--ink);
+        transform: rotate(-8deg);
+      }
+
+      .principle-glyph--2 span:nth-child(1),
+      .principle-glyph--2 span:nth-child(2),
+      .principle-glyph--2 span:nth-child(3),
+      .principle-glyph--2 span:nth-child(4) {
+        width: 16px;
+        height: 16px;
+        border: 1px solid var(--ink);
+        border-radius: 50%;
+        animation: pulseDot 2.4s ease-in-out infinite;
+      }
+
+      .principle-glyph--2 span:nth-child(1) { left: 10%; top: 45%; }
+      .principle-glyph--2 span:nth-child(2) { left: 31%; top: 18%; background: var(--green); }
+      .principle-glyph--2 span:nth-child(3) { left: 50%; top: 57%; }
+      .principle-glyph--2 span:nth-child(4) { left: 74%; top: 28%; }
+
+      .principle-glyph--2::before,
+      .principle-glyph--2::after {
+        content: "";
+        position: absolute;
+        height: 1px;
+        background: var(--ink);
+        transform-origin: left;
+      }
+
+      .principle-glyph--2::before {
+        width: 160px;
+        left: 15%;
+        top: 48%;
+        transform: rotate(-25deg);
+      }
+
+      .principle-glyph--2::after {
+        width: 130px;
+        left: 31%;
+        top: 50%;
+        transform: rotate(18deg);
+      }
+
+      .principle-glyph--3 span:nth-child(1) {
+        width: 112px;
+        height: 58px;
+        left: 4%;
+        top: 20%;
+        border: 1px solid var(--ink);
+        border-radius: 60px 60px 0 0;
+        transform: rotate(-20deg);
+      }
+
+      .principle-glyph--3 span:nth-child(2) {
+        width: 75px;
+        height: 75px;
+        left: 39%;
+        top: 0;
+        border-radius: 50%;
+        background: var(--coral);
+        opacity: .9;
+      }
+
+      .principle-glyph--3 span:nth-child(3) {
+        width: 1px;
+        height: 110px;
+        left: 70%;
+        top: 0;
+        background: var(--ink);
+        transform: rotate(18deg);
+      }
+
+      .principle-card h3 {
+        margin: 35px 0 13px;
+        font: 700 31px/1 "Space Grotesk", sans-serif;
+        letter-spacing: -.05em;
+      }
+
+      .principle-card p {
+        max-width: 340px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.75;
+      }
+
+      /* REPORT */
+      .report-prompt {
+        padding: 118px 0 130px;
+        background: var(--coral);
+        color: white;
+      }
+
+      .report-prompt__inner {
+        display: grid;
+        gap: 58px;
+      }
+
+      .report-prompt__meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        font: 8px "DM Mono", monospace;
+        letter-spacing: .1em;
+        color: rgba(255,255,255,.56);
+      }
+
+      .report-prompt__content {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(290px, .44fr);
+        gap: 70px;
+        align-items: end;
+      }
+
+      .report-prompt h2 {
+        margin: 14px 0 0;
+        font: 700 clamp(55px, 7vw, 96px)/.88 "Space Grotesk", sans-serif;
+        letter-spacing: -.075em;
+      }
+
+      .report-prompt h2 em {
+        color: var(--ink);
+        font-style: normal;
+      }
+
+      .report-prompt__action p {
+        max-width: 400px;
+        margin: 0 0 25px;
+        color: rgba(255,255,255,.66);
+        font-size: 13px;
+        line-height: 1.75;
+      }
+
+      .report-button {
+        min-height: 58px;
+        padding: 0 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+        border: 1px solid rgba(16,19,17,.28);
+        background: var(--ink);
+        color: white;
+        font-size: 11px;
+        font-weight: 800;
+        transition: transform .25s var(--ease), background .2s ease;
+      }
+
+      .report-button:hover {
+        background: white;
+        color: var(--ink);
+      }
+
+      .report-button b {
+        font: 400 18px "DM Mono", monospace;
+      }
+
+      /* CLOSING */
+      .closing {
+        position: relative;
+        min-height: 690px;
+        display: flex;
+        align-items: stretch;
+        overflow: hidden;
+        background: var(--paper-2);
+      }
+
+      .closing__giant {
+        position: absolute;
+        left: -2vw;
+        bottom: 2%;
+        font: 800 clamp(180px, 31vw, 520px)/.63 "Space Grotesk", sans-serif;
+        letter-spacing: -.12em;
+        color: rgba(16,19,17,.06);
+        white-space: nowrap;
+        user-select: none;
+        animation: closingDrift 20s ease-in-out infinite alternate;
+      }
+
+      .closing__inner {
+        position: relative;
+        z-index: 2;
+        min-height: 690px;
+        padding: 35px 0 42px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .closing__top,
+      .closing__bottom {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        color: #77736b;
+        font: 8px "DM Mono", monospace;
+        letter-spacing: .09em;
+      }
+
+      .closing__main h2 {
+        margin: 15px 0 48px;
+        font: 700 clamp(68px, 10vw, 142px)/.8 "Space Grotesk", sans-serif;
+        letter-spacing: -.09em;
+      }
+
+      .closing__main h2 span {
+        color: var(--green-2);
+      }
+
+      .closing-link {
+        min-height: 56px;
+        padding: 0 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 35px;
+        background: var(--ink);
+        color: white;
+        font-size: 11px;
+        font-weight: 800;
+        transition: transform .25s var(--ease), background .2s ease;
+      }
+
+      .closing-link:hover {
+        background: var(--green);
+        color: var(--ink);
+      }
+
+      .closing-link b {
+        font: 400 17px "DM Mono", monospace;
+      }
+
+      /* FOOTER */
+      .footer {
+        background: var(--ink);
+        color: white;
+      }
+
+      .footer__top {
+        padding: 80px 0 70px;
+        display: grid;
+        grid-template-columns: minmax(0,1fr) minmax(420px,1fr);
+        gap: 80px;
+      }
+
+      .brand--footer .brand__glyph i:first-child {
+        background: white;
+      }
+
+      .brand--footer .brand__glyph i:nth-child(2) {
+        background: var(--green);
+      }
+
+      .brand--footer .brand__glyph i:nth-child(3) {
+        background: var(--coral);
+      }
+
+      .footer__brand-block > p {
+        max-width: 330px;
+        margin: 24px 0 0;
+        color: rgba(255,255,255,.4);
+        font-size: 13px;
+        line-height: 1.75;
+      }
+
+      .footer__links {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0,1fr));
+        gap: 30px;
+      }
+
+      .footer-col {
+        display: grid;
+        align-content: start;
+        gap: 10px;
+      }
+
+      .footer-col > span {
+        margin-bottom: 8px;
+        color: rgba(255,255,255,.25);
+        font: 7px "DM Mono", monospace;
+        letter-spacing: .09em;
+      }
+
+      .footer-col a,
+      .footer-col strong {
+        color: rgba(255,255,255,.67);
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .footer-col a:hover {
+        color: white;
+      }
+
+      .footer-col small {
+        color: rgba(255,255,255,.34);
+        font: 7px/1.6 "DM Mono", monospace;
+        letter-spacing: .04em;
+      }
+
+      .footer__bottom {
+        min-height: 66px;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        align-items: center;
+        border-top: 1px solid rgba(255,255,255,.1);
+        color: rgba(255,255,255,.24);
+        font: 7px "DM Mono", monospace;
+        letter-spacing: .07em;
+      }
+
+      .footer__bottom span:nth-child(2) {
+        text-align: center;
+      }
+
+      .footer__bottom span:last-child {
+        text-align: right;
+      }
+
+      /* FLOATING REPORT */
+      .floating-report {
+        position: fixed;
+        right: 24px;
+        bottom: 20px;
+        z-index: 280;
+        min-height: 58px;
+        padding: 7px 10px 7px 9px;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--green);
+        color: var(--ink);
+        box-shadow: 0 14px 38px rgba(16,19,17,.22);
+        transition: transform .25s var(--ease), box-shadow .25s ease;
+      }
+
+      .floating-report:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 48px rgba(16,19,17,.3);
+      }
+
+      .floating-report__icon {
+        width: 40px;
+        height: 40px;
+        display: grid;
+        place-items: center;
+        background: var(--ink);
+        color: var(--green);
+        font: 400 23px/1 "DM Mono", monospace;
+      }
+
+      .floating-report__copy {
+        display: grid;
+        gap: 4px;
+      }
+
+      .floating-report__copy small {
+        font: 7px "DM Mono", monospace;
+        letter-spacing: .08em;
+      }
+
+      .floating-report__copy strong {
+        font: 800 11px/1 "Inter", sans-serif;
+      }
+
+      .floating-report__arrow {
+        font: 400 17px "DM Mono", monospace;
+      }
+
+      /* CURSOR */
+      .cursor {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 600;
+        pointer-events: none;
+        border-radius: 50%;
+        transform: translate(-50%,-50%);
+        display: block;
+      }
+
+      .cursor--outer {
+        width: 28px;
+        height: 28px;
+        border: 1px solid rgba(199,228,84,.65);
+        transition: width .25s ease, height .25s ease, border-color .25s ease;
+      }
+
+      .cursor--inner {
+        width: 4px;
+        height: 4px;
+        background: var(--green);
+      }
+
+      .cursor-focus .cursor--outer {
+        width: 52px;
+        height: 52px;
+        border-color: rgba(199,228,84,.9);
+      }
+
+      /* REVEALS */
+      [data-reveal-section] > .container,
+      [data-reveal-section] .section-intro,
+      [data-reveal-section] .service-matrix,
+      [data-reveal-section] .stats-grid,
+      [data-reveal-section] .method-timeline,
+      [data-reveal-section] .question-list,
+      [data-reveal-section] .coverage-shell,
+      [data-reveal-section] .material-system__grid,
+      [data-reveal-section] .principles-grid,
+      [data-reveal-section] .report-prompt__inner,
+      [data-reveal-section] .closing__inner {
+        opacity: 0;
+        transform: translateY(45px);
+        transition: opacity .9s var(--ease), transform .9s var(--ease);
+      }
+
+      [data-reveal-section].is-visible > .container,
+      [data-reveal-section].is-visible .section-intro,
+      [data-reveal-section].is-visible .service-matrix,
+      [data-reveal-section].is-visible .stats-grid,
+      [data-reveal-section].is-visible .method-timeline,
+      [data-reveal-section].is-visible .question-list,
+      [data-reveal-section].is-visible .coverage-shell,
+      [data-reveal-section].is-visible .material-system__grid,
+      [data-reveal-section].is-visible .principles-grid,
+      [data-reveal-section].is-visible .report-prompt__inner,
+      [data-reveal-section].is-visible .closing__inner {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .service-card:nth-child(2),
+      .service-card:nth-child(4),
+      .principle-card:nth-child(2) {
+        transition-delay: .08s;
+      }
+
+      .service-card:nth-child(3),
+      .principle-card:nth-child(3) {
+        transition-delay: .14s;
+      }
+
+      /* KEYFRAMES */
+      @keyframes navIn {
+        from { transform: scaleX(0); }
+        to { transform: scaleX(1); }
+      }
+
+      @keyframes titleIn {
+        from { opacity: 0; transform: translateY(42px); clip-path: inset(100% 0 0 0); }
+        to { opacity: 1; transform: translateY(0); clip-path: inset(0 0 0 0); }
+      }
+
+      @keyframes ruleIn {
+        to { transform: translateX(0); }
+      }
+
+      @keyframes posterDrift {
+        from { transform: translate3d(0,0,0) rotate(-4deg); }
+        to { transform: translate3d(-2vw,2vh,0) rotate(1deg); }
+      }
+
+      @keyframes posterDriftReverse {
+        from { transform: translate3d(0,0,0) rotate(3deg); }
+        to { transform: translate3d(1.4vw,-1.5vh,0) rotate(-1deg); }
+      }
+
+      @keyframes posterOrbit {
+        from { transform: rotate(0deg) scale(1); }
+        50% { transform: rotate(180deg) scale(1.08); }
+        to { transform: rotate(360deg) scale(1); }
+      }
+
+      @keyframes pulseDot {
+        0%,100% { transform: scale(1); opacity: .7; }
+        50% { transform: scale(1.25); opacity: 1; }
+      }
+
+      @keyframes slashMove {
+        0%,100% { transform: rotate(-32deg) translateX(0); opacity: .35; }
+        50% { transform: rotate(-32deg) translateX(-22px); opacity: 1; }
+      }
+
+      @keyframes spin {
+        to { transform: translate(-50%,-50%) rotate(360deg); }
+      }
+
+      @keyframes pulseRing {
+        0%,100% { transform: translate(-50%,-50%) scale(.95); opacity: .5; }
+        50% { transform: translate(-50%,-50%) scale(1.05); opacity: 1; }
+      }
+
+      @keyframes nodeBlink {
+        0%,100% { opacity: .55; }
+        50% { opacity: 1; }
+      }
+
+      @keyframes glyphFloat {
+        0%,100% { transform: translate3d(0,0,0); }
+        50% { transform: translate3d(10px,-5px,0); }
+      }
+
+      @keyframes marquee {
+        from { transform: translateX(0); }
+        to { transform: translateX(-50%); }
+      }
+
+      @keyframes nudge {
+        0%,100% { transform: translateY(0); }
+        50% { transform: translateY(5px); }
+      }
+
+      @keyframes closingDrift {
+        from { transform: translateX(0); }
+        to { transform: translateX(-3vw); }
+      }
+
+
+      /* DESIGN TOKENS / DETAIL 001
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 002
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 003
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 004
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 005
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 006
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 007
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 008
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 009
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 010
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 011
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 012
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 013
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 014
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 015
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 016
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 017
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 018
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 019
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 020
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 021
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 022
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 023
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 024
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 025
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 026
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 027
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 028
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 029
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 030
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 031
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 032
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 033
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 034
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 035
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 036
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 037
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 038
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 039
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 040
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 041
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 042
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 043
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 044
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 045
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 046
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 047
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 048
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 049
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 050
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 051
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 052
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 053
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 054
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 055
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 056
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 057
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 058
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 059
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 060
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 061
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 062
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 063
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 064
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 065
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 066
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 067
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 068
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 069
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 070
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 071
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 072
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 073
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 074
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 075
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 076
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 077
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 078
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 079
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 080
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 081
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 082
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 083
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 084
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 085
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 086
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 087
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 088
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 089
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 090
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 091
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 092
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 093
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 094
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 095
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 096
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 097
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 098
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 099
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 100
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 101
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 102
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 103
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 104
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 105
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 106
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 107
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 108
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 109
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 110
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 111
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 112
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 113
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 114
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 115
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 116
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 117
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 118
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 119
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 120
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 121
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 122
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 123
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 124
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 125
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 126
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 127
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 128
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 129
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 130
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 131
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 132
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 133
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 134
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 135
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 136
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 137
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 138
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 139
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 140
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 141
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 142
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 143
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 144
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 145
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 146
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 147
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 148
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 149
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 150
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 151
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 152
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 153
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 154
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 155
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 156
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 157
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 158
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 159
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 160
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 161
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 162
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 163
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 164
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 165
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 166
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 167
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 168
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 169
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 170
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 171
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 172
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 173
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 174
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 175
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 176
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 177
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 178
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 179
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* DESIGN TOKENS / DETAIL 180
+         Keep motion, spacing, and hierarchy consistent across sections. */
+
+      /* RESPONSIVE 1180 */
+      @media (max-width: 1180px) {
+        .container {
+          width: min(calc(100% - 48px), var(--page));
+        }
+
+        .header-inner {
+          grid-template-columns: 1fr auto;
+        }
+
+        .main-nav {
+          display: none;
+        }
+
+        .menu {
+          display: flex;
+        }
+
+        .hero__layout {
+          grid-template-columns: 44px minmax(0,1fr) 350px;
+          gap: 26px;
+        }
+
+        .hero h1 {
+          font-size: clamp(70px, 9.2vw, 132px);
+        }
+
+        .hero__poster {
+          min-height: 500px;
+        }
+
+        .section-intro--split,
+        .section-intro--split-dark,
+        .section-intro--questions,
+        .intro__head,
+        .intro__body,
+        .material-system__grid {
+          grid-template-columns: 140px minmax(0,1fr);
+        }
+
+        .report-prompt__content {
+          grid-template-columns: minmax(0,1fr) 360px;
+          gap: 45px;
+        }
+      }
+
+      /* RESPONSIVE 900 */
+      @media (max-width: 900px) {
+        .container {
+          width: min(calc(100% - 34px), var(--page));
+        }
+
+        .header-inner {
+          min-height: 70px;
+        }
+
+        .header-tools__place {
+          display: none;
+        }
+
+        .hero {
+          padding-top: 95px;
+        }
+
+        .hero__layout {
+          grid-template-columns: 1fr;
+          min-height: auto;
+        }
+
+        .hero__rail {
+          display: none;
+        }
+
+        .hero__copy {
+          min-height: 760px;
+          padding: 32px 0 35px;
+        }
+
+        .hero__title {
+          padding-top: 120px;
+        }
+
+        .hero__summary {
+          grid-template-columns: 1fr;
+        }
+
+        .hero__cta-row {
+          justify-content: flex-start;
+        }
+
+        .hero__poster {
+          min-height: 390px;
+          margin: 0 0 26px;
+        }
+
+        .hero__footer {
+          min-height: 56px;
+        }
+
+        .hero__footer-note {
+          min-height: 56px;
+        }
+
+        .intro,
+        .experience,
+        .method,
+        .questions,
+        .coverage,
+        .material-system,
+        .principles {
+          padding-top: 112px;
+          padding-bottom: 120px;
+        }
+
+        .intro__headline h2,
+        .material-system__main h2,
+        .report-prompt h2,
+        .closing__main h2 {
+          font-size: clamp(52px, 9vw, 85px);
+        }
+
+        .service-matrix {
+          grid-template-columns: 1fr;
+        }
+
+        .service-card {
+          min-height: 410px;
+        }
+
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .stat-cell:nth-child(2) {
+          border-right: 0;
+        }
+
+        .stat-cell:nth-child(-n + 2) {
+          border-bottom: 1px solid rgba(16,19,17,.18);
+        }
+
+        .coverage-shell,
+        .footer__top,
+        .report-prompt__content {
+          grid-template-columns: 1fr;
+        }
+
+        .coverage-art {
+          min-height: 440px;
+        }
+
+        .material-system__grid {
+          grid-template-columns: 1fr;
+        }
+
+        .material-system__side {
+          grid-template-columns: auto 1fr;
+          align-items: start;
+          gap: 24px;
+        }
+
+        .material-system__side p {
+          max-width: 260px;
+        }
+
+        .material-list__row {
+          grid-template-columns: 45px 1fr 68px 28px;
+        }
+
+        .material-list__row small {
+          display: none;
+        }
+
+        .principles-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .principle-card,
+        .principle-card + .principle-card {
+          min-height: 300px;
+          padding: 23px 0 35px;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .principle-card:last-child {
+          border-bottom: 0;
+        }
+
+        .principle-glyph {
+          margin-top: 38px;
+        }
+
+        .footer__links {
+          grid-template-columns: repeat(3, 1fr);
+        }
+
+        .cursor {
+          display: none;
+        }
+      }
+
+      /* RESPONSIVE 640 */
+      @media (max-width: 640px) {
+        .container {
+          width: calc(100% - 28px);
+        }
+
+        .brand__text small {
+          display: none;
+        }
+
+        .hero {
+          min-height: auto;
+        }
+
+        .hero__copy {
+          min-height: 665px;
+        }
+
+        .hero__meta {
+          align-items: flex-start;
+        }
+
+        .hero__meta .eyebrow:last-child {
+          display: none;
+        }
+
+        .hero__title {
+          padding-top: 98px;
+        }
+
+        .hero h1 {
+          font-size: clamp(66px, 19vw, 105px);
+          line-height: .83;
+        }
+
+        .hero__small-title {
+          font-size: 10px;
+        }
+
+        .hero__summary p {
+          font-size: 13px;
+          line-height: 1.7;
+        }
+
+        .hero__cta-row {
+          width: 100%;
+        }
+
+        .button {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .button--quiet {
+          display: none;
+        }
+
+        .hero__poster {
+          min-height: 350px;
+          padding: 13px;
+        }
+
+        .poster__letters {
+          font-size: 78px;
+        }
+
+        .poster__shape--one {
+          width: 86px;
+          height: 86px;
+        }
+
+        .poster__shape--four {
+          width: 110px;
+          height: 110px;
+        }
+
+        .hero__footer {
+          grid-template-columns: 1fr;
+        }
+
+        .hero__footer-note {
+          display: none;
+        }
+
+        .intro__head,
+        .intro__body,
+        .section-intro--split,
+        .section-intro--split-dark,
+        .section-intro--questions {
+          grid-template-columns: 1fr;
+          gap: 24px;
+        }
+
+        .intro__body {
+          margin-top: 55px;
+        }
+
+        .intro__number {
+          display: none;
+        }
+
+        .lead {
+          font-size: 25px;
+        }
+
+        .intro__copy-grid {
+          grid-template-columns: 1fr;
+          gap: 22px;
+        }
+
+        .intro__principle-strip {
+          grid-template-columns: 1fr;
+          gap: 9px;
+        }
+
+        .principle-strip__line {
+          display: none;
+        }
+
+        .principle-strip__item {
+          border-bottom: 1px solid var(--line);
+          padding: 13px 0;
+        }
+
+        .principle-strip__item small {
+          justify-self: start;
+        }
+
+        .section-intro h2 {
+          font-size: clamp(46px, 14vw, 70px);
+        }
+
+        .service-card {
+          min-height: 370px;
+          padding: 16px;
+        }
+
+        .service-card__visual svg {
+          width: 94%;
+        }
+
+        .service-card__body h3 {
+          font-size: 28px;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .stat-cell {
+          min-height: 132px;
+          padding: 18px 16px;
+        }
+
+        .stat-cell strong {
+          font-size: 37px;
+        }
+
+        .timeline-item {
+          min-height: 220px;
+          grid-template-columns: 42px 1px minmax(0,1fr);
+          gap: 18px;
+        }
+
+        .timeline-side {
+          display: none;
+        }
+
+        .timeline-copy h3 {
+          margin-top: 40px;
+          font-size: 35px;
+        }
+
+        .question-row {
+          min-height: 92px;
+          grid-template-columns: 32px 1fr 24px;
+          gap: 10px;
+        }
+
+        .question-row small {
+          display: none;
+        }
+
+        .question-row strong {
+          font-size: 21px;
+        }
+
+        .coverage-shell {
+          background: var(--ink);
+        }
+
+        .coverage-art {
+          min-height: 350px;
+          padding: 15px;
+        }
+
+        .territory {
+          min-height: 300px;
+        }
+
+        .territory__ring--1 { width: 190px; height: 190px; }
+        .territory__ring--2 { width: 300px; height: 300px; }
+        .territory__ring--3 { width: 410px; height: 410px; }
+
+        .directory-head,
+        .directory-row {
+          grid-template-columns: 32px 1fr 24px;
+          gap: 9px;
+          padding-inline: 14px;
+        }
+
+        .directory-head span:nth-child(3),
+        .directory-head span:nth-child(4),
+        .directory-row > span:nth-child(3),
+        .directory-row > span:nth-child(4) {
+          display: none;
+        }
+
+        .directory-row strong {
+          font-size: 21px;
+        }
+
+        .material-system__side {
+          grid-template-columns: 1fr;
+        }
+
+        .material-system__index {
+          width: 74px;
+          height: 74px;
+          font-size: 36px;
+        }
+
+        .material-list__row {
+          grid-template-columns: 36px 1fr 44px 24px;
+          min-height: 79px;
+        }
+
+        .material-list__row strong {
+          font-size: 18px;
+        }
+
+        .material-list__row b {
+          font-size: 7px;
+        }
+
+        .report-prompt {
+          padding: 92px 0 95px;
+        }
+
+        .report-prompt__meta span:last-child {
+          display: none;
+        }
+
+        .report-prompt h2 {
+          font-size: 55px;
+        }
+
+        .report-prompt__content {
+          gap: 38px;
+        }
+
+        .report-button {
+          width: 100%;
+        }
+
+        .closing {
+          min-height: 560px;
+        }
+
+        .closing__inner {
+          min-height: 560px;
+        }
+
+        .closing__top span:last-child,
+        .closing__bottom span:first-child {
+          display: none;
+        }
+
+        .closing__main h2 {
+          font-size: 65px;
+        }
+
+        .footer__top {
+          padding: 60px 0 46px;
+          gap: 50px;
+        }
+
+        .footer__links {
+          grid-template-columns: 1fr 1fr;
+          gap: 35px 20px;
+        }
+
+        .footer-col:last-child {
+          grid-column: 1 / -1;
+        }
+
+        .footer__bottom {
+          min-height: auto;
+          padding: 18px 0 24px;
+          grid-template-columns: 1fr 1fr;
+          gap: 9px;
+        }
+
+        .footer__bottom span:nth-child(2) {
+          text-align: right;
+        }
+
+        .footer__bottom span:last-child {
+          grid-column: 1 / -1;
+          text-align: left;
+        }
+
+        .floating-report {
+          right: 14px;
+          bottom: 14px;
+          width: 52px;
+          height: 52px;
+          min-height: 52px;
+          padding: 0;
+          display: grid;
+          place-items: center;
+          gap: 0;
+          border-radius: 1px;
+        }
+
+        .floating-report__icon {
+          width: 52px;
+          height: 52px;
+          background: var(--green);
+          color: var(--ink);
+          font-size: 27px;
+        }
+
+        .floating-report__copy,
+        .floating-report__arrow {
+          display: none;
+        }
+      }
+
+      /* REDUCED MOTION */
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+          animation-duration: .01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: .01ms !important;
+        }
+      }
+    </style>
+  </body>
+</html>
+

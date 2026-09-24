@@ -1,0 +1,26 @@
+{
+  "name": "binsight-preview",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "BINSIGHT — Badung Waste Intelligence preview collection.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "sync": "astro sync"
+  },
+  "dependencies": {
+    "@lucide/astro": "^1.47.0",
+    "astro": "^7.3.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^5.9.2"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

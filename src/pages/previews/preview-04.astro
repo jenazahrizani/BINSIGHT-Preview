@@ -1,0 +1,6109 @@
+﻿---
+import {
+  ArrowDown,
+  ArrowRight,
+  ArrowUpRight,
+  Building2,
+  ChartColumn,
+  FileText,
+  Map,
+  Menu,
+  Recycle,
+  Search,
+  ShieldCheck,
+  TriangleAlert,
+  X,
+} from "@lucide/astro";
+
+const BASE_URL = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
+
+function siteHref(path: string): string {
+  if (!path) return `${BASE_URL}/`;
+
+  if (/^(?:https?:|mailto:|tel:|#|data:|javascript:)/i.test(path)) {
+    return path;
+  }
+
+  const normalized = path.startsWith("/")
+    ? path
+    : `/${path}`;
+
+  if (
+    BASE_URL &&
+    (
+      normalized === BASE_URL ||
+      normalized.startsWith(`${BASE_URL}/`)
+    )
+  ) {
+    return normalized;
+  }
+
+  if (normalized === "/") {
+    return `${BASE_URL}/`;
+  }
+
+  return `${BASE_URL}${normalized}`;
+}
+
+const services = [
+  {
+    number: "01",
+    code: "PLACE / 01",
+    title: "Peta Persampahan",
+    description:
+      "Menelusuri kondisi persampahan berdasarkan lokasi dan wilayah untuk memahami konteks ruang di Badung.",
+    href: "/map",
+    icon: Map,
+  },
+  {
+    number: "02",
+    code: "DATA / 02",
+    title: "Data & Informasi",
+    description:
+      "Membaca informasi yang tersedia melalui rangkaian data yang lebih terstruktur dan mudah dipahami.",
+    href: "/dashboard",
+    icon: ChartColumn,
+  },
+  {
+    number: "03",
+    code: "PEOPLE / 03",
+    title: "Jaringan Organisasi",
+    description:
+      "Mengenali organisasi, komunitas, pendidikan, dan pihak lain yang bergerak dalam ekosistem persampahan.",
+    href: "/organizations",
+    icon: Building2,
+  },
+  {
+    number: "04",
+    code: "MATERIAL / 04",
+    title: "Pengetahuan Material",
+    description:
+      "Memahami kategori sampah dan karakter setiap material sebelum menentukan bagaimana material tersebut dikelola.",
+    href: "/waste",
+    icon: Recycle,
+  },
+];
+
+const principles = [
+  {
+    number: "01",
+    label: "CONTEXT",
+    title: "Kontekstual",
+    text:
+      "Lokasi, material, organisasi, dan kondisi ditempatkan dalam hubungan yang saling menjelaskan.",
+  },
+  {
+    number: "02",
+    label: "ACCESS",
+    title: "Terbuka",
+    text:
+      "Informasi publik disusun agar dapat ditemukan dan dipahami tanpa struktur yang rumit.",
+  },
+  {
+    number: "03",
+    label: "CARE",
+    title: "Bertanggung Jawab",
+    text:
+      "Informasi ditampilkan secara hati-hati dan tidak mengarang statistik yang belum tervalidasi.",
+  },
+];
+
+const organizations = [
+  {
+    number: "01",
+    name: "Organisasi Contoh A",
+    type: "Komunitas",
+    area: "Badung",
+    verified: true,
+  },
+  {
+    number: "02",
+    name: "Organisasi Contoh B",
+    type: "Swasta",
+    area: "Mengwi",
+    verified: true,
+  },
+  {
+    number: "03",
+    name: "Organisasi Contoh C",
+    type: "Pendidikan",
+    area: "Abiansemal",
+    verified: false,
+  },
+];
+
+const materials = [
+  {
+    number: "01",
+    name: "Organik",
+    code: "BIO / MATERIAL",
+    size: "wide",
+  },
+  {
+    number: "02",
+    name: "Anorganik",
+    code: "RECYCLE / MATERIAL",
+    size: "medium",
+  },
+  {
+    number: "03",
+    name: "Bahan Berbahaya",
+    code: "SPECIAL / HANDLING",
+    size: "medium",
+  },
+  {
+    number: "04",
+    name: "Elektronik",
+    code: "E-WASTE / MATERIAL",
+    size: "small",
+  },
+  {
+    number: "05",
+    name: "Residu",
+    code: "FINAL / MATERIAL",
+    size: "small",
+  },
+];
+
+const contextItems = [
+  {
+    number: "01",
+    code: "PLACE",
+    title: "Lokasi",
+    description:
+      "Memahami isu berdasarkan wilayah dan konteks ruang.",
+  },
+  {
+    number: "02",
+    code: "DATA",
+    title: "Informasi",
+    description:
+      "Menyusun informasi menjadi sesuatu yang dapat dibaca.",
+  },
+  {
+    number: "03",
+    code: "PEOPLE",
+    title: "Ekosistem",
+    description:
+      "Mengenali pihak yang bergerak dalam pengelolaan.",
+  },
+  {
+    number: "04",
+    code: "MATERIAL",
+    title: "Material",
+    description:
+      "Membedakan karakter dan jenis material sampah.",
+  },
+];
+
+const footerLinks = [
+  { label: "Peta", href: "/map" },
+  { label: "Data", href: "/dashboard" },
+  { label: "Organisasi", href: "/organizations" },
+  { label: "Jenis Sampah", href: "/waste" },
+];
+
+const currentYear = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+
+    <meta
+      name="description"
+      content="BINSIGHT â€” Badung Waste Intelligence. Platform informasi persampahan Kabupaten Badung untuk menemukan, memahami, dan melaporkan kondisi persampahan."
+    />
+
+    <meta
+      name="theme-color"
+      content="#ebe4d6"
+    />
+
+    <title>
+      BINSIGHT â€” Badung Waste Intelligence
+    </title>
+
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div class="site">
+
+      <!-- =========================================
+           HEADER
+      ========================================== -->
+
+      <header
+        class="header"
+        id="top"
+      >
+        <div class="shell header__inner">
+
+          <a
+            class="brand"
+            href={siteHref("/")}
+            aria-label="BINSIGHT â€” Beranda"
+          >
+            <span
+              class="brand__mark"
+              aria-hidden="true"
+            >
+              B
+            </span>
+
+            <span class="brand__copy">
+              <strong>
+                BINSIGHT
+              </strong>
+
+              <small>
+                BADUNG WASTE INTELLIGENCE
+              </small>
+            </span>
+          </a>
+
+          <nav
+            class="desktop-nav"
+            aria-label="Navigasi utama"
+          >
+            <a
+              class="desktop-nav__link is-active"
+              href={siteHref("/")}
+            >
+              Beranda
+            </a>
+
+            <a
+              class="desktop-nav__link"
+              href={siteHref("/map")}
+            >
+              Peta
+            </a>
+
+            <a
+              class="desktop-nav__link"
+              href={siteHref("/dashboard")}
+            >
+              Data
+            </a>
+
+            <a
+              class="desktop-nav__link"
+              href={siteHref("/organizations")}
+            >
+              Organisasi
+            </a>
+
+            <a
+              class="desktop-nav__link"
+              href={siteHref("/company")}
+            >
+              Tentang
+            </a>
+          </nav>
+
+          <div class="header__tools">
+
+            <a
+              class="search-button"
+              href={siteHref("/search")}
+              aria-label="Cari BINSIGHT"
+            >
+              <Search
+                size={17}
+                stroke-width={1.8}
+                aria-hidden="true"
+              />
+            </a>
+
+            <button
+              class="menu-button"
+              type="button"
+              aria-label="Buka menu"
+              aria-expanded="false"
+              data-menu-trigger
+            >
+              <Menu
+                size={21}
+                stroke-width={1.8}
+                data-menu-open
+              />
+
+              <X
+                size={21}
+                stroke-width={1.8}
+                data-menu-close style="display:none"
+              />
+            </button>
+
+          </div>
+        </div>
+
+        <div
+          class="mobile-panel"
+          data-mobile-panel
+          hidden
+        >
+          <div class="shell mobile-panel__inner">
+
+            <div class="mobile-panel__head">
+              <span>
+                INDEX / NAVIGATION
+              </span>
+
+              <strong>
+                BINSIGHT
+              </strong>
+            </div>
+
+            <nav
+              class="mobile-nav"
+              aria-label="Navigasi mobile"
+            >
+              <a href={siteHref("/")}>
+                <span>01</span>
+                <strong>Beranda</strong>
+              </a>
+
+              <a href={siteHref("/map")}>
+                <span>02</span>
+                <strong>Peta</strong>
+              </a>
+
+              <a href={siteHref("/dashboard")}>
+                <span>03</span>
+                <strong>Data</strong>
+              </a>
+
+              <a href={siteHref("/organizations")}>
+                <span>04</span>
+                <strong>Organisasi</strong>
+              </a>
+
+              <a href={siteHref("/company")}>
+                <span>05</span>
+                <strong>Tentang</strong>
+              </a>
+            </nav>
+
+            <div class="mobile-panel__footer">
+              <span>
+                BADUNG / BALI
+              </span>
+
+              <span>
+                PUBLIC INFORMATION PLATFORM
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </header>
+
+
+      <main>
+
+        <!-- =========================================
+             HERO
+        ========================================== -->
+
+        <section class="hero">
+
+          <div
+            class="hero__grain"
+            aria-hidden="true"
+          ></div>
+
+          <div class="shell hero__grid">
+
+            <div class="hero__index">
+              <span class="hero__index-number">
+                00
+              </span>
+
+              <span class="hero__index-label">
+                ENTRY / BINSIGHT
+              </span>
+
+              <span class="hero__index-location">
+                BADUNG
+                <br />
+                BALI
+              </span>
+            </div>
+
+            <div class="hero__main">
+
+              <div class="hero__topline">
+                <span>
+                  BADUNG WASTE INTELLIGENCE
+                </span>
+
+                <span>
+                  PUBLIC / 01
+                </span>
+              </div>
+
+              <div class="hero__headline">
+
+                <p class="hero__overline">
+                  SEBUAH ARSIP DIGITAL TENTANG
+                </p>
+
+                <h1>
+                  Cara kita
+                  <span>melihat</span>
+                  <em>sampah.</em>
+                </h1>
+
+              </div>
+
+
+              <div class="hero__bottom">
+
+                <div class="hero__statement">
+                  <span class="hero__statement-line"></span>
+
+                  <p>
+                    BINSIGHT menyusun informasi
+                    persampahan Kabupaten Badung
+                    melalui hubungan antara tempat,
+                    data, manusia, dan material.
+                  </p>
+
+                  <a
+                    class="hero__link"
+                    href={siteHref("/map")}
+                  >
+                    Mulai menjelajah
+
+                    <ArrowRight
+                      size={16}
+                      stroke-width={1.8}
+                      aria-hidden="true"
+                    />
+                  </a>
+                </div>
+
+
+                <div
+                  class="specimen"
+                  aria-label="Ringkasan konteks BINSIGHT"
+                >
+
+                  <div class="specimen__top">
+                    <span>
+                      SPECIMEN / 001
+                    </span>
+
+                    <span>
+                      ACTIVE
+                    </span>
+                  </div>
+
+                  <div class="specimen__canvas">
+
+                    <div
+                      class="orbit orbit--one"
+                      aria-hidden="true"
+                    ></div>
+
+                    <div
+                      class="orbit orbit--two"
+                      aria-hidden="true"
+                    ></div>
+
+                    <div
+                      class="orbit orbit--three"
+                      aria-hidden="true"
+                    ></div>
+
+                    <div
+                      class="orbit-line orbit-line--one"
+                      aria-hidden="true"
+                    ></div>
+
+                    <div
+                      class="orbit-line orbit-line--two"
+                      aria-hidden="true"
+                    ></div>
+
+                    <div class="node node--center">
+                      <span></span>
+                      BADUNG
+                    </div>
+
+                    <div class="node node--place">
+                      <i></i>
+                      PLACE
+                    </div>
+
+                    <div class="node node--data">
+                      <i></i>
+                      DATA
+                    </div>
+
+                    <div class="node node--people">
+                      <i></i>
+                      PEOPLE
+                    </div>
+
+                    <div class="node node--material">
+                      <i></i>
+                      MATERIAL
+                    </div>
+
+                    <div class="specimen__caption">
+                      <small>
+                        RELATIONSHIP FIELD
+                      </small>
+
+                      <strong>
+                        PLACE + DATA + PEOPLE
+                      </strong>
+                    </div>
+
+                  </div>
+
+                  <div class="specimen__bottom">
+
+                    <span>
+                      CONTEXT FIELD
+                    </span>
+
+                    <span>
+                      4 NODES
+                    </span>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+
+        <!-- =========================================
+             INTRO / MANIFESTO
+        ========================================== -->
+
+        <section class="manifesto">
+
+          <div class="shell">
+
+            <div class="section-code">
+              <span>
+                01
+              </span>
+
+              <span>
+                MANIFESTO
+              </span>
+
+              <span>
+                WHY BINSIGHT
+              </span>
+            </div>
+
+            <div class="manifesto__layout">
+
+              <div class="manifesto__number">
+                01
+              </div>
+
+              <div class="manifesto__headline">
+
+                <p class="micro-label">
+                  SYSTEM / CONTEXT
+                </p>
+
+                <h2>
+                  Persampahan
+                  <span>bukan satu benda.</span>
+                </h2>
+
+              </div>
+
+              <div class="manifesto__copy">
+
+                <p class="manifesto__lead">
+                  Ia adalah hubungan.
+                </p>
+
+                <p>
+                  Ada material yang berbeda,
+                  tempat yang berbeda, pihak yang
+                  bergerak, proses pengelolaan,
+                  dan kondisi lingkungan yang
+                  terus berubah.
+                </p>
+
+                <p>
+                  BINSIGHT mencoba membuat
+                  hubungan tersebut terlihat.
+                </p>
+
+                <a
+                  class="text-arrow"
+                  href={siteHref("/company")}
+                >
+                  Tentang BINSIGHT
+
+                  <span>
+                    <ArrowUpRight
+                      size={15}
+                      stroke-width={1.8}
+                      aria-hidden="true"
+                    />
+                  </span>
+                </a>
+
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- =========================================
+             SERVICES / ARCHIVE INDEX
+        ========================================== -->
+
+        <section class="archive">
+
+          <div class="shell">
+
+            <div class="section-code">
+              <span>
+                02
+              </span>
+
+              <span>
+                ARCHIVE
+              </span>
+
+              <span>
+                EXPLORE
+              </span>
+            </div>
+
+            <div class="archive__header">
+
+              <div>
+                <p class="micro-label">
+                  BINSIGHT / INDEX
+                </p>
+
+                <h2>
+                  Empat cara
+                  <span>masuk ke sistem.</span>
+                </h2>
+              </div>
+
+              <p>
+                Bukan halaman yang berdiri sendiri.
+                Setiap bagian memberikan sudut
+                pandang berbeda terhadap konteks
+                yang sama.
+              </p>
+
+            </div>
+
+
+            <div class="archive-list">
+
+              {services.map((service) => {
+                const Icon = service.icon;
+
+                return (
+                  <a
+                    class="archive-row"
+                    href={siteHref(service.href)}
+                  >
+
+                    <div class="archive-row__number">
+                      {service.number}
+                    </div>
+
+                    <div class="archive-row__symbol">
+                      <Icon
+                        size={22}
+                        stroke-width={1.5}
+                        aria-hidden="true"
+                      />
+                    </div>
+
+                    <div class="archive-row__content">
+
+                      <small>
+                        {service.code}
+                      </small>
+
+                      <h3>
+                        {service.title}
+                      </h3>
+
+                      <p>
+                        {service.description}
+                      </p>
+
+                    </div>
+
+                    <div class="archive-row__arrow">
+
+                      <span>
+                        OPEN
+                      </span>
+
+                      <div>
+                        <ArrowUpRight
+                          size={17}
+                          stroke-width={1.8}
+                          aria-hidden="true"
+                        />
+                      </div>
+
+                    </div>
+
+                  </a>
+                );
+              })}
+
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- =========================================
+             SYSTEM / FLOW
+        ========================================== -->
+
+        <section class="system">
+
+          <div class="shell">
+
+            <div class="section-code section-code--light">
+              <span>
+                03
+              </span>
+
+              <span>
+                SYSTEM
+              </span>
+
+              <span>
+                RELATIONSHIP
+              </span>
+            </div>
+
+            <div class="system__header">
+
+              <div>
+                <p class="micro-label micro-label--light">
+                  INFORMATION STRUCTURE
+                </p>
+
+                <h2>
+                  Satu isu.
+                  <span>
+                    Banyak hubungan.
+                  </span>
+                </h2>
+              </div>
+
+              <div class="system__aside">
+                <span>
+                  CONTEXT ENGINE
+                </span>
+
+                <p>
+                  Informasi menjadi lebih bermakna
+                  ketika setiap elemen dapat dibaca
+                  bersama elemen lainnya.
+                </p>
+              </div>
+
+            </div>
+
+
+            <div class="constellation">
+
+              <div class="constellation__center">
+                <small>
+                  BINSIGHT
+                </small>
+
+                <strong>
+                  CONTEXT
+                </strong>
+
+                <span>
+                  BADUNG
+                </span>
+              </div>
+
+              <div
+                class="constellation__line constellation__line--one"
+                aria-hidden="true"
+              ></div>
+
+              <div
+                class="constellation__line constellation__line--two"
+                aria-hidden="true"
+              ></div>
+
+              <div
+                class="constellation__line constellation__line--three"
+                aria-hidden="true"
+              ></div>
+
+              <div
+                class="constellation__line constellation__line--four"
+                aria-hidden="true"
+              ></div>
+
+              <div class="constellation__node constellation__node--one">
+                <span>01</span>
+                <strong>PLACE</strong>
+                <small>LOKASI</small>
+              </div>
+
+              <div class="constellation__node constellation__node--two">
+                <span>02</span>
+                <strong>DATA</strong>
+                <small>INFORMASI</small>
+              </div>
+
+              <div class="constellation__node constellation__node--three">
+                <span>03</span>
+                <strong>PEOPLE</strong>
+                <small>ORGANISASI</small>
+              </div>
+
+              <div class="constellation__node constellation__node--four">
+                <span>04</span>
+                <strong>MATERIAL</strong>
+                <small>SAMPAH</small>
+              </div>
+
+              <div class="constellation__legend">
+                <span></span>
+                CONNECTED CONTEXT
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- =========================================
+             PRINCIPLES
+        ========================================== -->
+
+        <section class="principles">
+
+          <div class="shell">
+
+            <div class="section-code">
+              <span>
+                04
+              </span>
+
+              <span>
+                PRINCIPLES
+              </span>
+
+              <span>
+                DESIGN NOTES
+              </span>
+            </div>
+
+            <div class="principles__headline">
+
+              <p class="micro-label">
+                INFORMATION / TRUST
+              </p>
+
+              <h2>
+                Dirancang untuk
+                <span>
+                  informasi publik.
+                </span>
+              </h2>
+
+            </div>
+
+
+            <div class="principles__grid">
+
+              {principles.map((principle) => (
+                <article class="principle-card">
+
+                  <div class="principle-card__top">
+
+                    <span>
+                      {principle.number}
+                    </span>
+
+                    <span>
+                      {principle.label}
+                    </span>
+
+                  </div>
+
+                  <div class="principle-card__body">
+
+                    <h3>
+                      {principle.title}
+                    </h3>
+
+                    <p>
+                      {principle.text}
+                    </p>
+
+                  </div>
+
+                  <div
+                    class="principle-card__line"
+                    aria-hidden="true"
+                  ></div>
+
+                </article>
+              ))}
+
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- =========================================
+             ORGANIZATIONS / DIRECTORY
+        ========================================== -->
+
+        <section class="directory">
+
+          <div class="shell">
+
+            <div class="section-code">
+              <span>
+                05
+              </span>
+
+              <span>
+                DIRECTORY
+              </span>
+
+              <span>
+                NETWORK
+              </span>
+            </div>
+
+            <div class="directory__header">
+
+              <div>
+                <p class="micro-label">
+                  PEOPLE / ORGANIZATION
+                </p>
+
+                <h2>
+                  Siapa yang
+                  <span>
+                    bergerak?
+                  </span>
+                </h2>
+              </div>
+
+              <p>
+                Ekosistem persampahan juga terdiri
+                dari pihak yang menjalankan,
+                mendukung, mendidik, dan mengelola.
+              </p>
+
+            </div>
+
+
+            <div class="directory-table">
+
+              <div class="directory-table__head">
+                <span>NO.</span>
+                <span>ORGANIZATION</span>
+                <span>TYPE</span>
+                <span>AREA</span>
+                <span>STATUS</span>
+                <span></span>
+              </div>
+
+              {organizations.map((organization) => (
+                <a
+                  class="directory-table__row"
+                  href={siteHref("/organizations")}
+                >
+
+                  <span class="directory-table__number">
+                    {organization.number}
+                  </span>
+
+                  <span class="directory-table__name">
+                    <strong>
+                      {organization.name}
+                    </strong>
+
+                    <small>
+                      PUBLIC ORGANIZATION
+                    </small>
+                  </span>
+
+                  <span class="directory-table__type">
+                    {organization.type}
+                  </span>
+
+                  <span class="directory-table__area">
+                    {organization.area}
+                  </span>
+
+                  <span
+                    class:list={[
+                      "directory-table__status",
+                      organization.verified &&
+                        "is-verified",
+                    ]}
+                  >
+                    <ShieldCheck
+                      size={14}
+                      stroke-width={1.7}
+                      aria-hidden="true"
+                    />
+
+                    {organization.verified
+                      ? "VERIFIED"
+                      : "EXAMPLE"}
+                  </span>
+
+                  <ArrowUpRight
+                    class="directory-table__arrow"
+                    size={18}
+                    stroke-width={1.7}
+                    aria-hidden="true"
+                  />
+
+                </a>
+              ))}
+
+            </div>
+
+            <p class="preview-note">
+              Data organisasi di atas merupakan
+              contoh visual untuk kebutuhan preview.
+            </p>
+
+          </div>
+        </section>
+
+
+        <!-- =========================================
+             MATERIALS
+        ========================================== -->
+
+        <section class="materials">
+
+          <div class="shell">
+
+            <div class="section-code">
+              <span>
+                06
+              </span>
+
+              <span>
+                MATERIAL
+              </span>
+
+              <span>
+                KNOWLEDGE
+              </span>
+            </div>
+
+            <div class="materials__header">
+
+              <div>
+                <p class="micro-label">
+                  MATERIAL INDEX
+                </p>
+
+                <h2>
+                  Semua material
+                  <span>
+                    punya karakter.
+                  </span>
+                </h2>
+              </div>
+
+              <p>
+                Mengenali kategori sampah membantu
+                memahami bahwa setiap material
+                memiliki kebutuhan pengelolaan
+                yang berbeda.
+              </p>
+
+            </div>
+
+
+            <div class="material-index">
+
+              <div class="material-index__rail">
+                <span>
+                  MATERIAL
+                </span>
+
+                <span>
+                  01 â€” 05
+                </span>
+              </div>
+
+              <div class="material-index__items">
+
+                {materials.map((material) => (
+                  <a
+                    class:list={[
+                      "material-row",
+                      `material-row--${material.size}`,
+                    ]}
+                    href={siteHref("/waste")}
+                  >
+
+                    <span class="material-row__number">
+                      {material.number}
+                    </span>
+
+                    <span class="material-row__name">
+                      {material.name}
+                    </span>
+
+                    <span class="material-row__code">
+                      {material.code}
+                    </span>
+
+                    <span class="material-row__arrow">
+                      <ArrowUpRight
+                        size={16}
+                        stroke-width={1.8}
+                        aria-hidden="true"
+                      />
+                    </span>
+
+                  </a>
+                ))}
+
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- =========================================
+             CONTEXT INDEX
+        ========================================== -->
+
+        <section class="context">
+
+          <div class="shell">
+
+            <div class="section-code">
+              <span>
+                07
+              </span>
+
+              <span>
+                CONTEXT
+              </span>
+
+              <span>
+                FIELD NOTES
+              </span>
+            </div>
+
+            <div class="context__headline">
+
+              <p class="micro-label">
+                FINAL READING
+              </p>
+
+              <h2>
+                Melihat lebih jauh
+                <span>
+                  dari satu sudut.
+                </span>
+              </h2>
+
+            </div>
+
+
+            <div class="context__grid">
+
+              {contextItems.map((item) => (
+                <article class="context-item">
+
+                  <div class="context-item__top">
+
+                    <span>
+                      {item.number}
+                    </span>
+
+                    <ArrowDown
+                      size={16}
+                      stroke-width={1.6}
+                      aria-hidden="true"
+                    />
+
+                  </div>
+
+                  <small>
+                    {item.code}
+                  </small>
+
+                  <h3>
+                    {item.title}
+                  </h3>
+
+                  <p>
+                    {item.description}
+                  </p>
+
+                </article>
+              ))}
+
+            </div>
+
+            <div class="context__signature">
+
+              <div>
+                <span>
+                  BINSIGHT
+                </span>
+
+                <strong>
+                  BADUNG WASTE INTELLIGENCE
+                </strong>
+              </div>
+
+              <span>
+                END OF INDEX / 07
+              </span>
+
+            </div>
+
+          </div>
+        </section>
+
+      </main>
+
+
+      <!-- =========================================
+           FOOTER
+      ========================================== -->
+
+      <footer class="footer">
+
+        <div class="shell">
+
+          <div class="footer__top">
+
+            <div class="footer__brand">
+
+              <a
+                class="brand brand--footer"
+                href={siteHref("/")}
+              >
+
+                <span
+                  class="brand__mark"
+                  aria-hidden="true"
+                >
+                  B
+                </span>
+
+                <span class="brand__copy">
+
+                  <strong>
+                    BINSIGHT
+                  </strong>
+
+                  <small>
+                    BADUNG WASTE INTELLIGENCE
+                  </small>
+
+                </span>
+
+              </a>
+
+              <p>
+                Platform informasi persampahan
+                Kabupaten Badung untuk menemukan,
+                memahami, dan melaporkan kondisi
+                persampahan.
+              </p>
+
+            </div>
+
+
+            <div class="footer__navigation">
+
+              <div>
+
+                <small>
+                  INDEX
+                </small>
+
+                {footerLinks.map((link) => (
+                  <a href={siteHref(link.href)}>
+                    <span>
+                      {link.label}
+                    </span>
+
+                    <ArrowUpRight
+                      size={13}
+                      stroke-width={1.7}
+                      aria-hidden="true"
+                    />
+                  </a>
+                ))}
+
+              </div>
+
+
+              <div>
+
+                <small>
+                  PLATFORM
+                </small>
+
+                <span>
+                  BADUNG / BALI
+                </span>
+
+                <span>
+                  PUBLIC INFORMATION
+                </span>
+
+                <span>
+                  Â© {currentYear} BINSIGHT
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="footer__bottom">
+
+            <span>
+              BINSIGHT / INDEX 07
+            </span>
+
+            <span>
+              PLACE Â· DATA Â· PEOPLE Â· MATERIAL
+            </span>
+
+          </div>
+
+        </div>
+      </footer>
+
+
+      <!-- =========================================
+           ONLY REPORT ENTRY POINT
+      ========================================== -->
+
+      <a
+        class="floating-report"
+        href={siteHref("/reports/create")}
+        aria-label="Buat laporan kondisi persampahan"
+      >
+
+        <span class="floating-report__mark">
+          <TriangleAlert
+            size={18}
+            stroke-width={2}
+            aria-hidden="true"
+          />
+        </span>
+
+        <span class="floating-report__text">
+
+          <small>
+            COMMUNITY INPUT
+          </small>
+
+          <strong>
+            Buat laporan
+          </strong>
+
+        </span>
+
+        <span class="floating-report__arrow">
+          <ArrowUpRight
+            size={16}
+            stroke-width={1.9}
+            aria-hidden="true"
+          />
+        </span>
+
+      </a>
+
+    </div>
+  </body>
+
+
+  <script>
+    const trigger =
+      document.querySelector<HTMLElement>(
+        "[data-menu-trigger]"
+      );
+
+    const panel =
+      document.querySelector<HTMLElement>(
+        "[data-mobile-panel]"
+      );
+
+    const openIcon =
+      trigger?.querySelector<SVGElement>(
+        "[data-menu-open]"
+      );
+
+    const closeIcon =
+      trigger?.querySelector<SVGElement>(
+        "[data-menu-close]"
+      );
+
+    const setMenu = (open: boolean) => {
+      if (!trigger || !panel) return;
+
+      trigger.setAttribute(
+        "aria-expanded",
+        String(open)
+      );
+
+      trigger.setAttribute(
+        "aria-label",
+        open
+          ? "Tutup menu"
+          : "Buka menu"
+      );
+
+      panel.hidden = !open;
+
+      if (open) {
+
+        openIcon?.setAttribute(
+          "hidden",
+          ""
+        );
+
+        closeIcon?.removeAttribute(
+          "hidden"
+        );
+
+        if (openIcon) {
+          openIcon.style.display =
+            "none";
+        }
+
+        if (closeIcon) {
+          closeIcon.style.display =
+            "block";
+        }
+
+      } else {
+
+        openIcon?.removeAttribute(
+          "hidden"
+        );
+
+        closeIcon?.setAttribute(
+          "hidden",
+          ""
+        );
+
+        if (openIcon) {
+          openIcon.style.display =
+            "block";
+        }
+
+        if (closeIcon) {
+          closeIcon.style.display =
+            "none";
+        }
+
+      }
+
+      document.body.classList.toggle(
+        "menu-open",
+        open
+      );
+    };
+
+    if (openIcon) {
+      openIcon.style.display = "block";
+    }
+
+    if (closeIcon) {
+      closeIcon.style.display = "none";
+    }
+
+    trigger?.addEventListener(
+      "click",
+      () => {
+        const isOpen =
+          trigger.getAttribute(
+            "aria-expanded"
+          ) === "true";
+
+        setMenu(!isOpen);
+      }
+    );
+
+    panel
+      ?.querySelectorAll("a")
+      .forEach((link) => {
+        link.addEventListener(
+          "click",
+          () => {
+            setMenu(false);
+          }
+        );
+      });
+
+    window.addEventListener(
+      "resize",
+      () => {
+        if (
+          window.innerWidth > 980
+        ) {
+          setMenu(false);
+        }
+      }
+    );
+
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.key === "Escape") {
+          setMenu(false);
+        }
+      }
+    );
+  </script>
+
+
+  <style>
+    /* =========================================
+       ROOT
+    ========================================== */
+
+    :global(:root) {
+      color-scheme: light;
+
+      font-family:
+        "Space Grotesk",
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        sans-serif;
+    }
+
+    :global(*) {
+      box-sizing: border-box;
+    }
+
+    :global(html) {
+      scroll-behavior: smooth;
+
+      background:
+        #ebe4d6;
+    }
+
+    :global(body) {
+      min-width: 320px;
+
+      margin: 0;
+
+      background:
+        #ebe4d6;
+
+      color:
+        #191916;
+    }
+
+    :global(body.menu-open) {
+      overflow: hidden;
+    }
+
+    :global(a) {
+      color: inherit;
+
+      text-decoration: none;
+    }
+
+    :global(button),
+    :global(a) {
+      -webkit-tap-highlight-color:
+        transparent;
+    }
+
+
+    /* =========================================
+       SYSTEM
+    ========================================== */
+
+    .site {
+      --paper:
+        #ebe4d6;
+
+      --paper-light:
+        #f4efe5;
+
+      --paper-white:
+        #fbf9f3;
+
+      --ink:
+        #191916;
+
+      --ink-soft:
+        #5d5a52;
+
+      --muted:
+        #858077;
+
+      --line:
+        #cfc7b8;
+
+      --line-dark:
+        #45433d;
+
+      --rust:
+        #bd4e3e;
+
+      --rust-light:
+        #e4a091;
+
+      --yellow:
+        #e8cb69;
+
+      --sage:
+        #99a98a;
+
+      --dark:
+        #171815;
+
+      --max:
+        1280px;
+
+      min-height: 100vh;
+
+      overflow: clip;
+
+      background:
+        var(--paper);
+
+      color:
+        var(--ink);
+
+      -webkit-font-smoothing:
+        antialiased;
+
+      text-rendering:
+        optimizeLegibility;
+    }
+
+    .shell {
+      width:
+        min(
+          var(--max),
+          calc(100% - 56px)
+        );
+
+      margin:
+        0 auto;
+    }
+
+
+    /* =========================================
+       HEADER
+    ========================================== */
+
+    .header {
+      position: sticky;
+
+      top: 0;
+
+      z-index: 100;
+
+      border-bottom:
+        1px solid
+        rgba(
+          25,
+          25,
+          22,
+          0.12
+        );
+
+      background:
+        rgba(
+          235,
+          228,
+          214,
+          0.9
+        );
+
+      backdrop-filter:
+        blur(16px);
+    }
+
+    .header__inner {
+      display: grid;
+
+      grid-template-columns:
+        minmax(0, 1fr)
+        auto
+        auto;
+
+      align-items: center;
+
+      min-height:
+        82px;
+
+      gap:
+        28px;
+    }
+
+    .brand {
+      display: inline-flex;
+
+      align-items: center;
+
+      gap:
+        11px;
+
+      width:
+        fit-content;
+    }
+
+    .brand__mark {
+      display: grid;
+
+      width:
+        40px;
+
+      height:
+        40px;
+
+      place-items:
+        center;
+
+      border:
+        1px solid
+        var(--ink);
+
+      background:
+        var(--ink);
+
+      color:
+        var(--paper);
+
+      font-family:
+        "Bodoni Moda",
+        Georgia,
+        serif;
+
+      font-size:
+        23px;
+
+      line-height:
+        1;
+    }
+
+    .brand__copy {
+      display: flex;
+
+      flex-direction: column;
+
+      gap:
+        2px;
+    }
+
+    .brand__copy strong {
+      font-size:
+        15px;
+
+      font-weight:
+        700;
+
+      letter-spacing:
+        -0.04em;
+    }
+
+    .brand__copy small {
+      color:
+        var(--muted);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        6px;
+
+      letter-spacing:
+        0.1em;
+    }
+
+    .desktop-nav {
+      display: flex;
+
+      align-items: center;
+
+      gap:
+        24px;
+    }
+
+    .desktop-nav__link {
+      position: relative;
+
+      display: inline-flex;
+
+      align-items: center;
+
+      min-height:
+        42px;
+
+      color:
+        #68645c;
+
+      font-size:
+        10px;
+
+      font-weight:
+        600;
+
+      letter-spacing:
+        0.015em;
+    }
+
+    .desktop-nav__link::after {
+      position: absolute;
+
+      right: 0;
+      bottom: 8px;
+      left: 0;
+
+      height:
+        1px;
+
+      content:
+        "";
+
+      background:
+        var(--ink);
+
+      transform:
+        scaleX(0);
+
+      transform-origin:
+        left;
+
+      transition:
+        transform
+        160ms ease;
+    }
+
+    .desktop-nav__link:hover,
+    .desktop-nav__link.is-active {
+      color:
+        var(--ink);
+    }
+
+    .desktop-nav__link:hover::after,
+    .desktop-nav__link.is-active::after {
+      transform:
+        scaleX(1);
+    }
+
+    .header__tools {
+      display: flex;
+
+      align-items: center;
+
+      gap:
+        7px;
+    }
+
+    .search-button,
+    .menu-button {
+      display: grid;
+
+      width:
+        40px;
+
+      height:
+        40px;
+
+      place-items:
+        center;
+
+      border:
+        1px solid
+        var(--line);
+
+      background:
+        var(--paper-light);
+
+      color:
+        var(--ink);
+
+      cursor:
+        pointer;
+
+      transition:
+        background
+        160ms ease,
+        transform
+        160ms ease;
+    }
+
+    .search-button:hover,
+    .menu-button:hover {
+      background:
+        var(--paper-white);
+
+      transform:
+        translateY(
+          -1px
+        );
+    }
+
+    .menu-button {
+      display: none;
+    }
+
+    .menu-button svg {
+      display: block;
+    }
+
+    .menu-button svg[hidden] {
+      display: none !important;
+    }
+
+    .mobile-panel {
+      border-top:
+        1px solid
+        var(--line);
+
+      background:
+        var(--paper-light);
+    }
+
+    .mobile-panel__inner {
+      padding:
+        26px 0 30px;
+    }
+
+    .mobile-panel__head {
+      display: flex;
+
+      align-items:
+        flex-end;
+
+      justify-content:
+        space-between;
+
+      gap:
+        20px;
+
+      padding-bottom:
+        18px;
+
+      border-bottom:
+        1px solid
+        var(--line);
+    }
+
+    .mobile-panel__head span {
+      color:
+        var(--muted);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.1em;
+    }
+
+    .mobile-panel__head strong {
+      font-family:
+        "Bodoni Moda",
+        Georgia,
+        serif;
+
+      font-size:
+        22px;
+
+      font-weight:
+        400;
+    }
+
+    .mobile-nav {
+      display: grid;
+    }
+
+    .mobile-nav a {
+      display: grid;
+
+      grid-template-columns:
+        36px
+        minmax(0, 1fr);
+
+      align-items:
+        center;
+
+      min-height:
+        62px;
+
+      border-bottom:
+        1px solid
+        var(--line);
+    }
+
+    .mobile-nav a span {
+      color:
+        var(--muted);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+    }
+
+    .mobile-nav a strong {
+      font-size:
+        20px;
+
+      font-weight:
+        600;
+
+      letter-spacing:
+        -0.045em;
+    }
+
+    .mobile-panel__footer {
+      display: flex;
+
+      justify-content:
+        space-between;
+
+      gap:
+        20px;
+
+      padding-top:
+        22px;
+
+      color:
+        var(--muted);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.06em;
+    }
+
+
+    /* =========================================
+       HERO
+    ========================================== */
+
+    .hero {
+      position: relative;
+
+      min-height:
+        850px;
+
+      border-bottom:
+        1px solid
+        var(--line);
+
+      background:
+        var(--paper);
+
+      overflow:
+        hidden;
+    }
+
+    .hero::before {
+      position: absolute;
+
+      inset:
+        0;
+
+      content:
+        "";
+
+      opacity:
+        0.3;
+
+      background-image:
+        linear-gradient(
+          rgba(
+            25,
+            25,
+            22,
+            0.045
+          )
+          1px,
+          transparent 1px
+        ),
+        linear-gradient(
+          90deg,
+          rgba(
+            25,
+            25,
+            22,
+            0.045
+          )
+          1px,
+          transparent 1px
+        );
+
+      background-size:
+        44px
+        44px;
+
+      pointer-events:
+        none;
+    }
+
+    .hero__grain {
+      position: absolute;
+
+      width:
+        420px;
+
+      height:
+        420px;
+
+      right:
+        -170px;
+
+      top:
+        120px;
+
+      border-radius:
+        50%;
+
+      background:
+        var(--rust);
+
+      opacity:
+        0.08;
+
+      filter:
+        blur(
+          20px
+        );
+
+      pointer-events:
+        none;
+    }
+
+    .hero__grid {
+      position: relative;
+
+      display: grid;
+
+      grid-template-columns:
+        54px
+        minmax(0, 1fr);
+
+      min-height:
+        850px;
+    }
+
+    .hero__index {
+      display: flex;
+
+      flex-direction:
+        column;
+
+      align-items:
+        center;
+
+      justify-content:
+        space-between;
+
+      padding:
+        70px
+        0
+        42px;
+
+      border-right:
+        1px solid
+        var(--line);
+
+      color:
+        var(--muted);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.08em;
+
+      text-transform:
+        uppercase;
+    }
+
+    .hero__index-number {
+      color:
+        var(--ink);
+
+      font-size:
+        10px;
+    }
+
+    .hero__index-label,
+    .hero__index-location {
+      writing-mode:
+        vertical-rl;
+
+      transform:
+        rotate(
+          180deg
+        );
+    }
+
+    .hero__index-location {
+      text-align:
+        center;
+    }
+
+    .hero__main {
+      min-width:
+        0;
+
+      padding:
+        50px
+        0
+        72px
+        72px;
+    }
+
+    .hero__topline {
+      display: flex;
+
+      justify-content:
+        space-between;
+
+      gap:
+        20px;
+
+      padding-bottom:
+        15px;
+
+      border-bottom:
+        1px solid
+        var(--line);
+
+      color:
+        var(--muted);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.09em;
+
+      text-transform:
+        uppercase;
+    }
+
+    .hero__overline {
+      margin:
+        56px 0
+        15px;
+
+      color:
+        var(--rust);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        8px;
+
+      letter-spacing:
+        0.11em;
+
+      text-transform:
+        uppercase;
+    }
+
+    .hero h1 {
+      max-width:
+        930px;
+
+      margin:
+        0;
+
+      font-family:
+        "Bodoni Moda",
+        Georgia,
+        serif;
+
+      font-size:
+        clamp(
+          80px,
+          10vw,
+          154px
+        );
+
+      font-weight:
+        400;
+
+      line-height:
+        0.78;
+
+      letter-spacing:
+        -0.075em;
+    }
+
+    .hero h1 span,
+    .hero h1 em {
+      display:
+        block;
+    }
+
+    .hero h1 span {
+      margin-left:
+        12%;
+    }
+
+    .hero h1 em {
+      margin-left:
+        5%;
+
+      color:
+        var(--rust);
+
+      font-style:
+        italic;
+    }
+
+    .hero__bottom {
+      display: grid;
+
+      grid-template-columns:
+        minmax(
+          230px,
+          0.7fr
+        )
+        minmax(
+          380px,
+          0.95fr
+        );
+
+      align-items:
+        end;
+
+      gap:
+        84px;
+
+      margin-top:
+        88px;
+    }
+
+    .hero__statement {
+      max-width:
+        430px;
+    }
+
+    .hero__statement-line {
+      display:
+        block;
+
+      width:
+        42px;
+
+      height:
+        2px;
+
+      margin-bottom:
+        18px;
+
+      background:
+        var(--rust);
+    }
+
+    .hero__statement p {
+      margin:
+        0;
+
+      color:
+        var(--ink-soft);
+
+      font-size:
+        13px;
+
+      line-height:
+        1.85;
+    }
+
+    .hero__link {
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      gap:
+        10px;
+
+      margin-top:
+        23px;
+
+      padding-bottom:
+        6px;
+
+      border-bottom:
+        1px solid
+        var(--ink);
+
+      font-size:
+        10px;
+
+      font-weight:
+        700;
+    }
+
+    .hero__link svg {
+      transition:
+        transform
+        160ms ease;
+    }
+
+    .hero__link:hover svg {
+      transform:
+        translateX(
+          3px
+        );
+    }
+
+
+    /* SPECIMEN */
+
+    .specimen {
+      overflow:
+        hidden;
+
+      border:
+        1px solid
+        var(--line);
+
+      background:
+        var(--paper-light);
+    }
+
+    .specimen__top,
+    .specimen__bottom {
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        space-between;
+
+      gap:
+        20px;
+
+      min-height:
+        42px;
+
+      padding:
+        0 15px;
+
+      color:
+        var(--muted);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.08em;
+    }
+
+    .specimen__top {
+      border-bottom:
+        1px solid
+        var(--line);
+    }
+
+    .specimen__top span:last-child {
+      color:
+        var(--rust);
+    }
+
+    .specimen__canvas {
+      position:
+        relative;
+
+      min-height:
+        318px;
+
+      overflow:
+        hidden;
+
+      background:
+        linear-gradient(
+          140deg,
+          #dfd5c4,
+          #f4efe5
+        );
+    }
+
+    .orbit {
+      position:
+        absolute;
+
+      border:
+        1px solid
+        rgba(
+          25,
+          25,
+          22,
+          0.22
+        );
+
+      border-radius:
+        50%;
+    }
+
+    .orbit--one {
+      width:
+        320px;
+
+      height:
+        320px;
+
+      top:
+        0;
+
+      left:
+        16%;
+    }
+
+    .orbit--two {
+      width:
+        230px;
+
+      height:
+        230px;
+
+      top:
+        44px;
+
+      left:
+        calc(16% + 45px);
+    }
+
+    .orbit--three {
+      width:
+        126px;
+
+      height:
+        126px;
+
+      top:
+        95px;
+
+      left:
+        calc(16% + 97px);
+    }
+
+    .orbit-line {
+      position:
+        absolute;
+
+      width:
+        1px;
+
+      height:
+        440px;
+
+      background:
+        rgba(
+          25,
+          25,
+          22,
+          0.16
+        );
+
+      transform-origin:
+        center;
+    }
+
+    .orbit-line--one {
+      top:
+        -70px;
+
+      left:
+        54%;
+
+      transform:
+        rotate(
+          38deg
+        );
+    }
+
+    .orbit-line--two {
+      top:
+        -60px;
+
+      left:
+        54%;
+
+      transform:
+        rotate(
+          -48deg
+        );
+    }
+
+    .node {
+      position:
+        absolute;
+
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      gap:
+        7px;
+
+      padding:
+        7px 9px;
+
+      border:
+        1px solid
+        var(--ink);
+
+      background:
+        var(--paper-white);
+
+      color:
+        var(--ink);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.05em;
+
+      box-shadow:
+        4px
+        4px
+        0
+        rgba(
+          25,
+          25,
+          22,
+          0.1
+        );
+    }
+
+    .node--center {
+      top:
+        132px;
+
+      left:
+        calc(
+          16%
+          + 117px
+        );
+
+      padding:
+        13px
+        15px;
+
+      flex-direction:
+        column;
+
+      gap:
+        4px;
+
+      background:
+        var(--ink);
+
+      color:
+        var(--paper-white);
+
+      font-size:
+        9px;
+    }
+
+    .node--center span {
+      width:
+        7px;
+
+      height:
+        7px;
+
+      border-radius:
+        50%;
+
+      background:
+        var(--rust);
+    }
+
+    .node i {
+      width:
+        6px;
+
+      height:
+        6px;
+
+      border-radius:
+        50%;
+
+      background:
+        var(--rust);
+    }
+
+    .node--place {
+      top:
+        72px;
+
+      left:
+        15px;
+    }
+
+    .node--data {
+      top:
+        38px;
+
+      right:
+        19px;
+    }
+
+    .node--people {
+      bottom:
+        37px;
+
+      left:
+        25px;
+    }
+
+    .node--material {
+      right:
+        17px;
+
+      bottom:
+        64px;
+    }
+
+    .specimen__caption {
+      position:
+        absolute;
+
+      right:
+        16px;
+
+      bottom:
+        14px;
+
+      display:
+        flex;
+
+      flex-direction:
+        column;
+
+      gap:
+        4px;
+
+      padding:
+        9px
+        11px;
+
+      background:
+        rgba(
+          251,
+          249,
+          243,
+          0.9
+        );
+
+      border:
+        1px solid
+        rgba(
+          25,
+          25,
+          22,
+          0.15
+        );
+    }
+
+    .specimen__caption small,
+    .specimen__caption strong {
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+    }
+
+    .specimen__caption small {
+      color:
+        var(--muted);
+
+      font-size:
+        6px;
+
+      letter-spacing:
+        0.08em;
+    }
+
+    .specimen__caption strong {
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.05em;
+    }
+
+    .specimen__bottom {
+      border-top:
+        1px solid
+        var(--line);
+    }
+
+
+    /* =========================================
+       COMMON SECTION CODE
+    ========================================== */
+
+    .section-code {
+      display:
+        grid;
+
+      grid-template-columns:
+        38px
+        auto
+        minmax(
+          20px,
+          1fr
+        );
+
+      align-items:
+        center;
+
+      gap:
+        11px;
+
+      color:
+        var(--muted);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.1em;
+
+      text-transform:
+        uppercase;
+    }
+
+    .section-code span:first-child {
+      color:
+        var(--rust);
+
+      font-size:
+        9px;
+    }
+
+    .section-code::after {
+      height:
+        1px;
+
+      content:
+        "";
+
+      background:
+        var(--line);
+    }
+
+    .section-code--light {
+      color:
+        #888a81;
+    }
+
+    .section-code--light::after {
+      background:
+        #3b3c37;
+    }
+
+    .section-code--light
+      span:first-child {
+      color:
+        var(--rust-light);
+    }
+
+    .micro-label {
+      margin:
+        0;
+
+      color:
+        var(--muted);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.1em;
+
+      text-transform:
+        uppercase;
+    }
+
+    .micro-label--light {
+      color:
+        #888a81;
+    }
+
+
+    /* =========================================
+       MANIFESTO
+    ========================================== */
+
+    .manifesto {
+      padding:
+        126px
+        0;
+
+      border-bottom:
+        1px solid
+        var(--line);
+
+      background:
+        var(--paper-light);
+    }
+
+    .manifesto__layout {
+      display:
+        grid;
+
+      grid-template-columns:
+        55px
+        minmax(
+          0,
+          1fr
+        )
+        minmax(
+          280px,
+          0.54fr
+        );
+
+      gap:
+        58px;
+
+      margin-top:
+        65px;
+    }
+
+    .manifesto__number {
+      color:
+        #b9b0a1;
+
+      font-family:
+        "Bodoni Moda",
+        Georgia,
+        serif;
+
+      font-size:
+        82px;
+
+      line-height:
+        0.8;
+    }
+
+    .manifesto__headline {
+      max-width:
+        720px;
+    }
+
+    .manifesto__headline h2,
+    .archive h2,
+    .system h2,
+    .principles h2,
+    .directory h2,
+    .materials h2,
+    .context h2 {
+      margin:
+        14px 0
+        0;
+
+      font-family:
+        "Bodoni Moda",
+        Georgia,
+        serif;
+
+      font-size:
+        clamp(
+          54px,
+          6.4vw,
+          94px
+        );
+
+      font-weight:
+        400;
+
+      line-height:
+        0.9;
+
+      letter-spacing:
+        -0.06em;
+    }
+
+    .manifesto__headline h2 span,
+    .archive h2 span,
+    .system h2 span,
+    .principles h2 span,
+    .directory h2 span,
+    .materials h2 span,
+    .context h2 span {
+      display:
+        block;
+
+      color:
+        var(--rust);
+
+      font-style:
+        italic;
+    }
+
+    .manifesto__copy {
+      padding-top:
+        52px;
+    }
+
+    .manifesto__lead {
+      margin:
+        0 0 18px;
+
+      font-size:
+        20px;
+
+      font-weight:
+        600;
+
+      letter-spacing:
+        -0.035em;
+    }
+
+    .manifesto__copy p:not(.manifesto__lead) {
+      margin:
+        0 0 17px;
+
+      color:
+        var(--ink-soft);
+
+      font-size:
+        13px;
+
+      line-height:
+        1.8;
+    }
+
+    .text-arrow {
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      gap:
+        8px;
+
+      margin-top:
+        8px;
+
+      font-size:
+        10px;
+
+      font-weight:
+        700;
+    }
+
+    .text-arrow span {
+      display:
+        grid;
+
+      width:
+        31px;
+
+      height:
+        31px;
+
+      place-items:
+        center;
+
+      border:
+        1px solid
+        var(--line);
+    }
+
+
+    /* =========================================
+       ARCHIVE
+    ========================================== */
+
+    .archive {
+      padding:
+        126px
+        0;
+
+      border-bottom:
+        1px solid
+        var(--line);
+
+      background:
+        var(--paper);
+    }
+
+    .archive__header {
+      display:
+        grid;
+
+      grid-template-columns:
+        minmax(
+          0,
+          1fr
+        )
+        340px;
+
+      gap:
+        70px;
+
+      margin:
+        55px
+        0
+        58px;
+    }
+
+    .archive__header > p {
+      align-self:
+        end;
+
+      margin:
+        0;
+
+      color:
+        var(--ink-soft);
+
+      font-size:
+        13px;
+
+      line-height:
+        1.8;
+    }
+
+    .archive-list {
+      border-top:
+        1px solid
+        var(--ink);
+    }
+
+    .archive-row {
+      display:
+        grid;
+
+      grid-template-columns:
+        58px
+        62px
+        minmax(
+          0,
+          1fr
+        )
+        120px;
+
+      align-items:
+        center;
+
+      gap:
+        18px;
+
+      min-height:
+        178px;
+
+      border-bottom:
+        1px solid
+        var(--line);
+
+      transition:
+        background
+        170ms ease,
+        padding
+        170ms ease;
+    }
+
+    .archive-row:hover {
+      padding-left:
+        15px;
+
+      padding-right:
+        15px;
+
+      background:
+        #e5dbca;
+    }
+
+    .archive-row__number {
+      align-self:
+        start;
+
+      padding-top:
+        28px;
+
+      color:
+        #a19a8e;
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        8px;
+    }
+
+    .archive-row__symbol {
+      display:
+        grid;
+
+      width:
+        50px;
+
+      height:
+        50px;
+
+      place-items:
+        center;
+
+      border:
+        1px solid
+        var(--ink);
+
+      background:
+        var(--paper-light);
+
+      color:
+        var(--rust);
+    }
+
+    .archive-row__content small {
+      color:
+        var(--muted);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.09em;
+    }
+
+    .archive-row__content h3 {
+      margin:
+        7px 0
+        7px;
+
+      font-size:
+        27px;
+
+      font-weight:
+        700;
+
+      letter-spacing:
+        -0.055em;
+    }
+
+    .archive-row__content p {
+      max-width:
+        650px;
+
+      margin:
+        0;
+
+      color:
+        var(--ink-soft);
+
+      font-size:
+        11px;
+
+      line-height:
+        1.72;
+    }
+
+    .archive-row__arrow {
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        flex-end;
+
+      gap:
+        9px;
+
+      color:
+        var(--muted);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.08em;
+    }
+
+    .archive-row__arrow div {
+      display:
+        grid;
+
+      width:
+        38px;
+
+      height:
+        38px;
+
+      place-items:
+        center;
+
+      border:
+        1px solid
+        var(--line);
+
+      background:
+        var(--paper-light);
+    }
+
+    .archive-row:hover
+      .archive-row__arrow div {
+      background:
+        var(--rust);
+
+      color:
+        #fff;
+
+      border-color:
+        var(--rust);
+    }
+
+
+    /* =========================================
+       SYSTEM
+    ========================================== */
+
+    .system {
+      padding:
+        122px
+        0;
+
+      border-bottom:
+        1px solid
+        #343631;
+
+      background:
+        var(--dark);
+
+      color:
+        #f5f1e8;
+    }
+
+    .system__header {
+      display:
+        grid;
+
+      grid-template-columns:
+        minmax(
+          0,
+          1fr
+        )
+        320px;
+
+      gap:
+        65px;
+
+      margin:
+        54px 0
+        62px;
+    }
+
+    .system__aside {
+      align-self:
+        end;
+    }
+
+    .system__aside > span {
+      display:
+        block;
+
+      color:
+        #898b82;
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.1em;
+    }
+
+    .system__aside p {
+      margin:
+        10px 0 0;
+
+      color:
+        #aaa99e;
+
+      font-size:
+        12px;
+
+      line-height:
+        1.8;
+    }
+
+    .system h2 span {
+      color:
+        var(--rust-light);
+    }
+
+    .constellation {
+      position:
+        relative;
+
+      min-height:
+        530px;
+
+      border:
+        1px solid
+        #363831;
+
+      background:
+        radial-gradient(
+          circle at center,
+          rgba(
+            190,
+            78,
+            62,
+            0.09
+          ),
+          transparent 23%
+        );
+    }
+
+    .constellation::before {
+      position:
+        absolute;
+
+      inset:
+        0;
+
+      content:
+        "";
+
+      opacity:
+        0.2;
+
+      background-image:
+        radial-gradient(
+          #70736a 0.7px,
+          transparent 0.7px
+        );
+
+      background-size:
+        17px 17px;
+    }
+
+    .constellation__center {
+      position:
+        absolute;
+
+      top:
+        50%;
+
+      left:
+        50%;
+
+      z-index:
+        3;
+
+      display:
+        flex;
+
+      width:
+        175px;
+
+      height:
+        175px;
+
+      flex-direction:
+        column;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      border:
+        1px solid
+        #6c6e65;
+
+      border-radius:
+        50%;
+
+      background:
+        #1d1f1b;
+
+      transform:
+        translate(
+          -50%,
+          -50%
+        );
+
+      box-shadow:
+        0
+        0
+        0
+        14px
+        rgba(
+          25,
+          26,
+          22,
+          0.3
+        );
+    }
+
+    .constellation__center::before {
+      position:
+        absolute;
+
+      inset:
+        12px;
+
+      content:
+        "";
+
+      border:
+        1px solid
+        #383b34;
+
+      border-radius:
+        50%;
+    }
+
+    .constellation__center small {
+      position:
+        relative;
+
+      color:
+        #96998e;
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.1em;
+    }
+
+    .constellation__center strong {
+      position:
+        relative;
+
+      margin:
+        5px 0;
+
+      color:
+        #fff;
+
+      font-family:
+        "Bodoni Moda",
+        Georgia,
+        serif;
+
+      font-size:
+        27px;
+
+      font-weight:
+        400;
+    }
+
+    .constellation__center span {
+      position:
+        relative;
+
+      color:
+        var(--rust-light);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.1em;
+    }
+
+    .constellation__line {
+      position:
+        absolute;
+
+      left:
+        50%;
+
+      top:
+        50%;
+
+      width:
+        1px;
+
+      height:
+        41%;
+
+      z-index:
+        1;
+
+      background:
+        #4b4d45;
+
+      transform-origin:
+        top;
+    }
+
+    .constellation__line--one {
+      transform:
+        translateY(
+          -100%
+        )
+        rotate(
+          27deg
+        );
+    }
+
+    .constellation__line--two {
+      transform:
+        translateY(
+          -100%
+        )
+        rotate(
+          117deg
+        );
+    }
+
+    .constellation__line--three {
+      transform:
+        translateY(
+          -100%
+        )
+        rotate(
+          207deg
+        );
+    }
+
+    .constellation__line--four {
+      transform:
+        translateY(
+          -100%
+        )
+        rotate(
+          297deg
+        );
+    }
+
+    .constellation__node {
+      position:
+        absolute;
+
+      z-index:
+        4;
+
+      display:
+        flex;
+
+      min-width:
+        110px;
+
+      min-height:
+        72px;
+
+      flex-direction:
+        column;
+
+      justify-content:
+        center;
+
+      padding:
+        11px;
+
+      border:
+        1px solid
+        #484b44;
+
+      background:
+        #1d1f1b;
+
+      box-shadow:
+        5px
+        5px
+        0
+        rgba(
+          0,
+          0,
+          0,
+          0.18
+        );
+    }
+
+    .constellation__node span,
+    .constellation__node small {
+      color:
+        #888b82;
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        6px;
+
+      letter-spacing:
+        0.08em;
+    }
+
+    .constellation__node strong {
+      margin:
+        5px 0 2px;
+
+      font-size:
+        12px;
+
+      font-weight:
+        600;
+    }
+
+    .constellation__node--one {
+      top:
+        72px;
+
+      left:
+        15%;
+    }
+
+    .constellation__node--two {
+      top:
+        58px;
+
+      right:
+        14%;
+    }
+
+    .constellation__node--three {
+      right:
+        13%;
+
+      bottom:
+        72px;
+    }
+
+    .constellation__node--four {
+      bottom:
+        54px;
+
+      left:
+        15%;
+    }
+
+    .constellation__legend {
+      position:
+        absolute;
+
+      right:
+        17px;
+
+      top:
+        16px;
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      gap:
+        8px;
+
+      color:
+        #7d8077;
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        6px;
+
+      letter-spacing:
+        0.08em;
+    }
+
+    .constellation__legend span {
+      width:
+        6px;
+
+      height:
+        6px;
+
+      border-radius:
+        50%;
+
+      background:
+        var(--rust-light);
+    }
+
+
+    /* =========================================
+       PRINCIPLES
+    ========================================== */
+
+    .principles {
+      padding:
+        126px
+        0;
+
+      border-bottom:
+        1px solid
+        var(--line);
+
+      background:
+        var(--paper-light);
+    }
+
+    .principles__headline {
+      max-width:
+        820px;
+
+      margin-top:
+        55px;
+    }
+
+    .principles__grid {
+      display:
+        grid;
+
+      grid-template-columns:
+        repeat(
+          3,
+          minmax(
+            0,
+            1fr
+          )
+        );
+
+      gap:
+        0;
+
+      margin-top:
+        65px;
+
+      border-top:
+        1px solid
+        var(--ink);
+    }
+
+    .principle-card {
+      min-height:
+        330px;
+
+      padding:
+        20px
+        28px
+        24px
+        0;
+
+      border-right:
+        1px solid
+        var(--line);
+    }
+
+    .principle-card
+      + .principle-card {
+      padding-left:
+        28px;
+    }
+
+    .principle-card:last-child {
+      border-right:
+        0;
+
+      padding-right:
+        0;
+    }
+
+    .principle-card__top {
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        space-between;
+
+      gap:
+        10px;
+
+      color:
+        var(--muted);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.08em;
+    }
+
+    .principle-card__body {
+      margin-top:
+        82px;
+    }
+
+    .principle-card h3 {
+      margin:
+        0;
+
+      font-family:
+        "Bodoni Moda",
+        Georgia,
+        serif;
+
+      font-size:
+        35px;
+
+      font-weight:
+        400;
+
+      line-height:
+        0.95;
+
+      letter-spacing:
+        -0.045em;
+    }
+
+    .principle-card p {
+      max-width:
+        310px;
+
+      margin:
+        16px 0 0;
+
+      color:
+        var(--ink-soft);
+
+      font-size:
+        11px;
+
+      line-height:
+        1.75;
+    }
+
+    .principle-card__line {
+      width:
+        38px;
+
+      height:
+        2px;
+
+      margin-top:
+        22px;
+
+      background:
+        var(--rust);
+    }
+
+
+    /* =========================================
+       DIRECTORY
+    ========================================== */
+
+    .directory {
+      padding:
+        126px
+        0;
+
+      border-bottom:
+        1px solid
+        var(--line);
+
+      background:
+        var(--paper);
+    }
+
+    .directory__header {
+      display:
+        grid;
+
+      grid-template-columns:
+        minmax(
+          0,
+          1fr
+        )
+        340px;
+
+      gap:
+        70px;
+
+      margin-top:
+        55px;
+
+      margin-bottom:
+        55px;
+    }
+
+    .directory__header > p {
+      align-self:
+        end;
+
+      margin:
+        0;
+
+      color:
+        var(--ink-soft);
+
+      font-size:
+        13px;
+
+      line-height:
+        1.8;
+    }
+
+    .directory-table {
+      border-top:
+        1px solid
+        var(--ink);
+    }
+
+    .directory-table__head,
+    .directory-table__row {
+      display:
+        grid;
+
+      grid-template-columns:
+        55px
+        minmax(
+          0,
+          1.3fr
+        )
+        150px
+        120px
+        145px
+        24px;
+
+      align-items:
+        center;
+
+      gap:
+        15px;
+    }
+
+    .directory-table__head {
+      min-height:
+        44px;
+
+      color:
+        var(--muted);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.08em;
+
+      text-transform:
+        uppercase;
+    }
+
+    .directory-table__row {
+      min-height:
+        88px;
+
+      border-top:
+        1px solid
+        var(--line);
+
+      transition:
+        background
+        160ms ease,
+        padding
+        160ms ease;
+    }
+
+    .directory-table__row:hover {
+      padding-left:
+        10px;
+
+      padding-right:
+        10px;
+
+      background:
+        #ded5c4;
+    }
+
+    .directory-table__number {
+      color:
+        #989084;
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        8px;
+    }
+
+    .directory-table__name {
+      display:
+        flex;
+
+      min-width:
+        0;
+
+      flex-direction:
+        column;
+
+      gap:
+        4px;
+    }
+
+    .directory-table__name strong {
+      overflow:
+        hidden;
+
+      text-overflow:
+        ellipsis;
+
+      white-space:
+        nowrap;
+
+      font-size:
+        15px;
+
+      font-weight:
+        700;
+
+      letter-spacing:
+        -0.035em;
+    }
+
+    .directory-table__name small,
+    .directory-table__type,
+    .directory-table__area,
+    .directory-table__status {
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.06em;
+
+      text-transform:
+        uppercase;
+    }
+
+    .directory-table__name small,
+    .directory-table__type,
+    .directory-table__area {
+      color:
+        var(--muted);
+    }
+
+    .directory-table__status {
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      gap:
+        5px;
+
+      min-height:
+        27px;
+
+      padding:
+        0 8px;
+
+      border:
+        1px solid
+        var(--line);
+
+      color:
+        var(--muted);
+
+      white-space:
+        nowrap;
+    }
+
+    .directory-table__status.is-verified {
+      border-color:
+        #aa7770;
+
+      background:
+        #ead3cf;
+
+      color:
+        #883d32;
+    }
+
+    .directory-table__arrow {
+      color:
+        #8b847a;
+
+      transition:
+        transform
+        160ms ease;
+    }
+
+    .directory-table__row:hover
+      .directory-table__arrow {
+      transform:
+        translate(
+          2px,
+          -2px
+        );
+    }
+
+    .preview-note {
+      margin:
+        15px 0 0;
+
+      color:
+        #8d867b;
+
+      font-size:
+        9px;
+
+      line-height:
+        1.6;
+    }
+
+
+    /* =========================================
+       MATERIAL INDEX
+    ========================================== */
+
+    .materials {
+      padding:
+        126px
+        0;
+
+      border-bottom:
+        1px solid
+        var(--line);
+
+      background:
+        var(--paper-light);
+    }
+
+    .materials__header {
+      display:
+        grid;
+
+      grid-template-columns:
+        minmax(
+          0,
+          1fr
+        )
+        340px;
+
+      gap:
+        70px;
+
+      margin-top:
+        55px;
+
+      margin-bottom:
+        58px;
+    }
+
+    .materials__header > p {
+      align-self:
+        end;
+
+      margin:
+        0;
+
+      color:
+        var(--ink-soft);
+
+      font-size:
+        13px;
+
+      line-height:
+        1.8;
+    }
+
+    .material-index {
+      display:
+        grid;
+
+      grid-template-columns:
+        80px
+        minmax(
+          0,
+          1fr
+        );
+
+      border-top:
+        1px solid
+        var(--ink);
+    }
+
+    .material-index__rail {
+      display:
+        flex;
+
+      flex-direction:
+        column;
+
+      justify-content:
+        space-between;
+
+      padding:
+        17px
+        0;
+
+      border-right:
+        1px solid
+        var(--line);
+
+      color:
+        var(--muted);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.08em;
+    }
+
+    .material-index__items {
+      display:
+        grid;
+    }
+
+    .material-row {
+      position:
+        relative;
+
+      display:
+        grid;
+
+      grid-template-columns:
+        48px
+        minmax(
+          180px,
+          0.8fr
+        )
+        minmax(
+          180px,
+          0.65fr
+        )
+        32px;
+
+      align-items:
+        center;
+
+      gap:
+        16px;
+
+      min-height:
+        100px;
+
+      border-bottom:
+        1px solid
+        var(--line);
+
+      transition:
+        background
+        160ms ease,
+        padding
+        160ms ease;
+    }
+
+    .material-row:hover {
+      padding-left:
+        12px;
+
+      padding-right:
+        12px;
+
+      background:
+        #ded5c4;
+    }
+
+    .material-row--wide {
+      min-height:
+        136px;
+    }
+
+    .material-row--medium {
+      min-height:
+        113px;
+    }
+
+    .material-row--small {
+      min-height:
+        86px;
+    }
+
+    .material-row__number {
+      color:
+        #9b9388;
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        8px;
+    }
+
+    .material-row__name {
+      font-family:
+        "Bodoni Moda",
+        Georgia,
+        serif;
+
+      font-size:
+        clamp(
+          27px,
+          3.1vw,
+          42px
+        );
+
+      font-weight:
+        400;
+
+      line-height:
+        0.9;
+
+      letter-spacing:
+        -0.05em;
+    }
+
+    .material-row__code {
+      color:
+        var(--muted);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.08em;
+    }
+
+    .material-row__arrow {
+      display:
+        grid;
+
+      width:
+        31px;
+
+      height:
+        31px;
+
+      place-items:
+        center;
+
+      border:
+        1px solid
+        var(--line);
+    }
+
+    .material-row:hover
+      .material-row__arrow {
+      background:
+        var(--rust);
+
+      border-color:
+        var(--rust);
+
+      color:
+        #fff;
+    }
+
+
+    /* =========================================
+       CONTEXT
+    ========================================== */
+
+    .context {
+      padding:
+        126px
+        0;
+
+      border-bottom:
+        1px solid
+        var(--line);
+
+      background:
+        var(--paper);
+    }
+
+    .context__headline {
+      max-width:
+        850px;
+
+      margin-top:
+        55px;
+    }
+
+    .context__grid {
+      display:
+        grid;
+
+      grid-template-columns:
+        repeat(
+          4,
+          minmax(
+            0,
+            1fr
+          )
+        );
+
+      gap:
+        0;
+
+      margin-top:
+        65px;
+
+      border-top:
+        1px solid
+        var(--ink);
+    }
+
+    .context-item {
+      min-height:
+        248px;
+
+      padding:
+        19px
+        23px
+        22px 0;
+
+      border-right:
+        1px solid
+        var(--line);
+    }
+
+    .context-item
+      + .context-item {
+      padding-left:
+        23px;
+    }
+
+    .context-item:last-child {
+      padding-right:
+        0;
+
+      border-right:
+        0;
+    }
+
+    .context-item__top {
+      display:
+        flex;
+
+      justify-content:
+        space-between;
+
+      align-items:
+        center;
+
+      color:
+        var(--muted);
+    }
+
+    .context-item__top span {
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+    }
+
+    .context-item > small {
+      display:
+        block;
+
+      margin-top:
+        72px;
+
+      color:
+        var(--rust);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.09em;
+    }
+
+    .context-item h3 {
+      margin:
+        7px 0
+        0;
+
+      font-family:
+        "Bodoni Moda",
+        Georgia,
+        serif;
+
+      font-size:
+        32px;
+
+      font-weight:
+        400;
+
+      line-height:
+        0.95;
+
+      letter-spacing:
+        -0.045em;
+    }
+
+    .context-item p {
+      max-width:
+        240px;
+
+      margin:
+        9px 0 0;
+
+      color:
+        var(--ink-soft);
+
+      font-size:
+        10px;
+
+      line-height:
+        1.7;
+    }
+
+    .context__signature {
+      display:
+        flex;
+
+      align-items:
+        flex-end;
+
+      justify-content:
+        space-between;
+
+      gap:
+        20px;
+
+      padding-top:
+        42px;
+
+      border-top:
+        1px solid
+        var(--line);
+
+      margin-top:
+        35px;
+    }
+
+    .context__signature div {
+      display:
+        flex;
+
+      flex-direction:
+        column;
+
+      gap:
+        5px;
+    }
+
+    .context__signature div span {
+      color:
+        var(--rust);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.08em;
+    }
+
+    .context__signature div strong {
+      font-family:
+        "Bodoni Moda",
+        Georgia,
+        serif;
+
+      font-size:
+        23px;
+
+      font-weight:
+        400;
+    }
+
+    .context__signature > span {
+      color:
+        var(--muted);
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.08em;
+    }
+
+
+    /* =========================================
+       FOOTER
+    ========================================== */
+
+    .footer {
+      background:
+        #ded6c7;
+    }
+
+    .footer__top {
+      display:
+        grid;
+
+      grid-template-columns:
+        minmax(
+          0,
+          1fr
+        )
+        minmax(
+          360px,
+          0.7fr
+        );
+
+      gap:
+        90px;
+
+      padding:
+        72px
+        0
+        58px;
+    }
+
+    .footer__brand p {
+      max-width:
+        440px;
+
+      margin:
+        21px 0 0;
+
+      color:
+        #68635a;
+
+      font-size:
+        11px;
+
+      line-height:
+        1.8;
+    }
+
+    .footer__navigation {
+      display:
+        grid;
+
+      grid-template-columns:
+        1fr
+        1fr;
+
+      gap:
+        42px;
+    }
+
+    .footer__navigation > div {
+      display:
+        flex;
+
+      flex-direction:
+        column;
+
+      align-items:
+        flex-start;
+
+      gap:
+        8px;
+    }
+
+    .footer__navigation small {
+      margin-bottom:
+        10px;
+
+      color:
+        #8b8377;
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.08em;
+    }
+
+    .footer__navigation a {
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      gap:
+        7px;
+
+      font-size:
+        10px;
+
+      font-weight:
+        600;
+    }
+
+    .footer__navigation a:hover {
+      color:
+        var(--rust);
+    }
+
+    .footer__navigation span {
+      color:
+        #6c665d;
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.05em;
+    }
+
+    .footer__bottom {
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        space-between;
+
+      gap:
+        20px;
+
+      min-height:
+        58px;
+
+      border-top:
+        1px solid
+        #c4baaa;
+
+      color:
+        #847c71;
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        7px;
+
+      letter-spacing:
+        0.08em;
+    }
+
+
+    /* =========================================
+       FLOATING REPORT
+       ONE AND ONLY REPORT ENTRY
+    ========================================== */
+
+    .floating-report {
+      position:
+        fixed;
+
+      right:
+        22px;
+
+      bottom:
+        22px;
+
+      z-index:
+        120;
+
+      display:
+        inline-grid;
+
+      grid-template-columns:
+        42px
+        minmax(
+          95px,
+          1fr
+        )
+        31px;
+
+      align-items:
+        center;
+
+      gap:
+        9px;
+
+      min-width:
+        218px;
+
+      min-height:
+        62px;
+
+      padding:
+        8px;
+
+      border:
+        1px solid
+        #87392f;
+
+      background:
+        var(--rust);
+
+      color:
+        #fff;
+
+      box-shadow:
+        7px
+        7px
+        0
+        rgba(
+          25,
+          25,
+          22,
+          0.17
+        );
+
+      transition:
+        transform
+        170ms ease,
+        box-shadow
+        170ms ease;
+    }
+
+    .floating-report:hover {
+      transform:
+        translate(
+          -2px,
+          -3px
+        );
+
+      box-shadow:
+        9px
+        10px
+        0
+        rgba(
+          25,
+          25,
+          22,
+          0.18
+        );
+    }
+
+    .floating-report__mark {
+      display:
+        grid;
+
+      width:
+        42px;
+
+      height:
+        42px;
+
+      place-items:
+        center;
+
+      background:
+        var(--ink);
+
+      color:
+        var(--yellow);
+    }
+
+    .floating-report__text {
+      display:
+        flex;
+
+      flex-direction:
+        column;
+
+      gap:
+        3px;
+
+      min-width:
+        0;
+    }
+
+    .floating-report__text small {
+      color:
+        rgba(
+          255,
+          255,
+          255,
+          0.65
+        );
+
+      font-family:
+        "IBM Plex Mono",
+        monospace;
+
+      font-size:
+        6px;
+
+      letter-spacing:
+        0.08em;
+    }
+
+    .floating-report__text strong {
+      font-size:
+        11px;
+
+      font-weight:
+        700;
+    }
+
+    .floating-report__arrow {
+      display:
+        grid;
+
+      width:
+        31px;
+
+      height:
+        31px;
+
+      place-items:
+        center;
+
+      border:
+        1px solid
+        rgba(
+          255,
+          255,
+          255,
+          0.28
+        );
+
+      background:
+        rgba(
+          255,
+          255,
+          255,
+          0.1
+        );
+    }
+
+
+    /* =========================================
+       FOCUS
+    ========================================== */
+
+    :global(a:focus-visible),
+    :global(button:focus-visible) {
+      outline:
+        2px solid
+        var(--rust);
+
+      outline-offset:
+        4px;
+    }
+
+
+    /* =========================================
+       TABLET
+    ========================================== */
+
+    @media (max-width: 1080px) {
+
+      .desktop-nav {
+        gap:
+          16px;
+      }
+
+      .hero__bottom {
+        grid-template-columns:
+          1fr;
+
+        gap:
+          45px;
+      }
+
+      .hero__signal {
+        max-width:
+          700px;
+      }
+
+      .manifesto__layout {
+        grid-template-columns:
+          45px
+          minmax(
+            0,
+            1fr
+          )
+          minmax(
+            260px,
+            0.55fr
+          );
+
+        gap:
+          42px;
+      }
+
+      .archive__header,
+      .system__header,
+      .directory__header,
+      .materials__header {
+        grid-template-columns:
+          1fr
+          300px;
+      }
+
+      .context__grid {
+        grid-template-columns:
+          repeat(
+            2,
+            minmax(
+              0,
+              1fr
+            )
+          );
+      }
+
+      .context-item:nth-child(2) {
+        border-right:
+          0;
+      }
+
+      .context-item:nth-child(3),
+      .context-item:nth-child(4) {
+        border-top:
+          1px solid
+          var(--line);
+      }
+
+      .context-item:nth-child(3) {
+        padding-left:
+          0;
+      }
+
+      .context-item:nth-child(4) {
+        padding-left:
+          23px;
+      }
+
+    }
+
+
+    /* =========================================
+       MOBILE
+    ========================================== */
+
+    @media (max-width: 760px) {
+
+      .shell {
+        width:
+          min(
+            var(--max),
+            calc(100% - 30px)
+          );
+      }
+
+
+      /* HEADER */
+
+      .header__inner {
+        min-height:
+          68px;
+      }
+
+      .brand__mark {
+        width:
+          36px;
+
+        height:
+          36px;
+
+        font-size:
+          21px;
+      }
+
+      .brand__copy strong {
+        font-size:
+          14px;
+      }
+
+      .brand__copy small {
+        display:
+          none;
+      }
+
+      .desktop-nav,
+      .search-button {
+        display:
+          none;
+      }
+
+      .header__inner {
+        grid-template-columns:
+          1fr
+          auto;
+      }
+
+      .menu-button {
+        display:
+          grid;
+      }
+
+
+      /* HERO */
+
+      .hero,
+      .hero__grid {
+        min-height:
+          auto;
+      }
+
+      .hero__grid {
+        display:
+          block;
+      }
+
+      .hero__index {
+        display:
+          none;
+      }
+
+      .hero__main {
+        padding:
+          40px
+          0
+          54px;
+      }
+
+      .hero__topline {
+        min-height:
+          34px;
+      }
+
+      .hero__overline {
+        margin:
+          45px
+          0
+          13px;
+      }
+
+      .hero h1 {
+        font-size:
+          clamp(
+            60px,
+            18vw,
+            94px
+          );
+
+        line-height:
+          0.81;
+      }
+
+      .hero h1 span {
+        margin-left:
+          7%;
+      }
+
+      .hero h1 em {
+        margin-left:
+          2%;
+      }
+
+      .hero__bottom {
+        margin-top:
+          52px;
+      }
+
+      .hero__statement {
+        max-width:
+          none;
+      }
+
+      .hero__statement p {
+        font-size:
+          12px;
+      }
+
+      .specimen__canvas {
+        min-height:
+          290px;
+      }
+
+      .orbit--one {
+        width:
+          275px;
+
+        height:
+          275px;
+
+        left:
+          10px;
+      }
+
+      .orbit--two {
+        width:
+          200px;
+
+        height:
+          200px;
+
+        left:
+          47px;
+      }
+
+      .orbit--three {
+        width:
+          108px;
+
+        height:
+          108px;
+
+        left:
+          93px;
+      }
+
+      .node--center {
+        left:
+          108px;
+
+        top:
+          113px;
+      }
+
+      .node--place {
+        top:
+          46px;
+      }
+
+      .node--people {
+        bottom:
+          30px;
+      }
+
+      .node--data {
+        right:
+          11px;
+      }
+
+      .node--material {
+        right:
+          10px;
+
+        bottom:
+          45px;
+      }
+
+
+      /* SHARED */
+
+      .section-code {
+        grid-template-columns:
+          28px
+          auto
+          minmax(
+            12px,
+            1fr
+          );
+
+        font-size:
+          6px;
+      }
+
+      .manifesto,
+      .archive,
+      .system,
+      .principles,
+      .directory,
+      .materials,
+      .context {
+        padding:
+          80px
+          0;
+      }
+
+
+      /* MANIFESTO */
+
+      .manifesto__layout {
+        grid-template-columns:
+          1fr;
+
+        gap:
+          30px;
+
+        margin-top:
+          42px;
+      }
+
+      .manifesto__number {
+        display:
+          none;
+      }
+
+      .manifesto__copy {
+        padding-top:
+          0;
+      }
+
+      .manifesto__headline h2,
+      .archive h2,
+      .system h2,
+      .principles h2,
+      .directory h2,
+      .materials h2,
+      .context h2 {
+        font-size:
+          clamp(
+            48px,
+            14vw,
+            69px
+          );
+      }
+
+
+      /* ARCHIVE */
+
+      .archive__header,
+      .system__header,
+      .directory__header,
+      .materials__header {
+        grid-template-columns:
+          1fr;
+
+        gap:
+          27px;
+
+        margin-top:
+          40px;
+
+        margin-bottom:
+          42px;
+      }
+
+      .archive-row {
+        grid-template-columns:
+          31px
+          45px
+          minmax(
+            0,
+            1fr
+          );
+
+        gap:
+          10px;
+
+        min-height:
+          160px;
+      }
+
+      .archive-row:hover {
+        padding-left:
+          7px;
+
+        padding-right:
+          7px;
+      }
+
+      .archive-row__symbol {
+        width:
+          43px;
+
+        height:
+          43px;
+      }
+
+      .archive-row__content h3 {
+        font-size:
+          19px;
+      }
+
+      .archive-row__content p {
+        font-size:
+          10px;
+      }
+
+      .archive-row__arrow {
+        display:
+          none;
+      }
+
+
+      /* SYSTEM */
+
+      .system {
+        padding:
+          82px
+          0;
+      }
+
+      .system__aside {
+        max-width:
+          350px;
+      }
+
+      .constellation {
+        min-height:
+          500px;
+      }
+
+      .constellation__center {
+        width:
+          132px;
+
+        height:
+          132px;
+      }
+
+      .constellation__center strong {
+        font-size:
+          21px;
+      }
+
+      .constellation__node {
+        min-width:
+          91px;
+
+        min-height:
+          62px;
+      }
+
+      .constellation__node--one {
+        left:
+          5%;
+
+        top:
+          70px;
+      }
+
+      .constellation__node--two {
+        right:
+          5%;
+
+        top:
+          65px;
+      }
+
+      .constellation__node--three {
+        right:
+          5%;
+
+        bottom:
+          65px;
+      }
+
+      .constellation__node--four {
+        left:
+          5%;
+
+        bottom:
+          50px;
+      }
+
+
+      /* PRINCIPLES */
+
+      .principles__headline {
+        margin-top:
+          40px;
+      }
+
+      .principles__grid {
+        grid-template-columns:
+          1fr;
+
+        margin-top:
+          42px;
+      }
+
+      .principle-card,
+      .principle-card
+        + .principle-card,
+      .principle-card:last-child {
+        min-height:
+          240px;
+
+        padding:
+          23px
+          0;
+
+        border-right:
+          0;
+
+        border-bottom:
+          1px solid
+          var(--line);
+      }
+
+      .principle-card:last-child {
+        border-bottom:
+          0;
+      }
+
+      .principle-card__body {
+        margin-top:
+          55px;
+      }
+
+
+      /* DIRECTORY */
+
+      .directory-table__head {
+        display:
+          none;
+      }
+
+      .directory-table__row {
+        grid-template-columns:
+          28px
+          minmax(
+            0,
+            1fr
+          )
+          20px;
+
+        min-height:
+          82px;
+
+        gap:
+          10px;
+      }
+
+      .directory-table__type,
+      .directory-table__area,
+      .directory-table__status {
+        display:
+          none;
+      }
+
+      .directory-table__row:hover {
+        padding-left:
+          6px;
+
+        padding-right:
+          6px;
+      }
+
+
+      /* MATERIAL */
+
+      .material-index {
+        grid-template-columns:
+          45px
+          minmax(
+            0,
+            1fr
+          );
+      }
+
+      .material-index__rail {
+        padding:
+          14px
+          0;
+      }
+
+      .material-row {
+        grid-template-columns:
+          29px
+          minmax(
+            0,
+            1fr
+          )
+          31px;
+
+        min-height:
+          90px;
+
+        gap:
+          8px;
+      }
+
+      .material-row--wide {
+        min-height:
+          115px;
+      }
+
+      .material-row--medium {
+        min-height:
+          100px;
+      }
+
+      .material-row--small {
+        min-height:
+          82px;
+      }
+
+      .material-row:hover {
+        padding-left:
+          7px;
+
+        padding-right:
+          7px;
+      }
+
+      .material-row__name {
+        font-size:
+          24px;
+      }
+
+      .material-row__code {
+        display:
+          none;
+      }
+
+
+      /* CONTEXT */
+
+      .context__headline {
+        margin-top:
+          40px;
+      }
+
+      .context__grid {
+        grid-template-columns:
+          1fr;
+
+        margin-top:
+          42px;
+      }
+
+      .context-item,
+      .context-item
+        + .context-item,
+      .context-item:last-child {
+        min-height:
+          210px;
+
+        padding:
+          20px
+          0;
+
+        border-right:
+          0;
+
+        border-bottom:
+          1px solid
+          var(--line);
+      }
+
+      .context-item:last-child {
+        border-bottom:
+          0;
+      }
+
+      .context-item:nth-child(3),
+      .context-item:nth-child(4) {
+        border-top:
+          0;
+      }
+
+      .context-item > small {
+        margin-top:
+          47px;
+      }
+
+      .context__signature {
+        align-items:
+          flex-start;
+
+        flex-direction:
+          column;
+
+        gap:
+          18px;
+
+        padding-top:
+          27px;
+      }
+
+
+      /* FOOTER */
+
+      .footer__top {
+        grid-template-columns:
+          1fr;
+
+        gap:
+          45px;
+
+        padding:
+          55px
+          0
+          42px;
+      }
+
+      .footer__navigation {
+        grid-template-columns:
+          1fr;
+
+        gap:
+          30px;
+      }
+
+      .footer__bottom {
+        align-items:
+          flex-start;
+
+        flex-direction:
+          column;
+
+        justify-content:
+          center;
+
+        min-height:
+          78px;
+
+        padding:
+          12px
+          0;
+
+        gap:
+          7px;
+      }
+
+
+      /* FLOATING REPORT */
+
+      .floating-report {
+        right:
+          14px;
+
+        bottom:
+          14px;
+
+        min-width:
+          54px;
+
+        width:
+          54px;
+
+        height:
+          54px;
+
+        min-height:
+          54px;
+
+        padding:
+          0;
+
+        display:
+          grid;
+
+        grid-template-columns:
+          1fr;
+
+        place-items:
+          center;
+
+        border-radius:
+          0;
+
+        box-shadow:
+          5px
+          5px
+          0
+          rgba(
+            25,
+            25,
+            22,
+            0.17
+          );
+      }
+
+      .floating-report__mark {
+        width:
+          42px;
+
+        height:
+          42px;
+      }
+
+      .floating-report__text,
+      .floating-report__arrow {
+        display:
+          none;
+      }
+
+    }
+
+
+    /* =========================================
+       REDUCED MOTION
+    ========================================== */
+
+    @media (prefers-reduced-motion: reduce) {
+
+      :global(html) {
+        scroll-behavior:
+          auto;
+      }
+
+      :global(*) {
+        transition-duration:
+          0.01ms !important;
+
+        animation-duration:
+          0.01ms !important;
+
+        animation-iteration-count:
+          1 !important;
+      }
+
+    }
+  </style>
+</html>

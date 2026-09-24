@@ -1,0 +1,389 @@
+---
+const previews = [
+  {
+    id: "01",
+    title: "Brutalist Version",
+    description: "Eksplorasi brutalist dengan struktur tegas, kontras tinggi, dan tipografi kuat.",
+    date: "21 SEP 2026",
+    route: "/previews/preview-01",
+  },
+  {
+    id: "02",
+    title: "Modern Corporate Editorial",
+    description: "Pendekatan corporate modern dengan komposisi editorial yang bersih dan terstruktur.",
+    date: "21 SEP 2026",
+    route: "/previews/preview-02",
+  },
+  {
+    id: "03",
+    title: "Contemporary Civic Editorial",
+    description: "Bahasa visual civic kontemporer dengan fokus pada informasi dan keterbacaan.",
+    date: "21 SEP 2026",
+    route: "/previews/preview-03",
+  },
+  {
+    id: "04",
+    title: "Spatial Archive Interface",
+    description: "Eksplorasi interface berbasis ruang, arsip, dan hubungan antar informasi.",
+    date: "21 SEP 2026",
+    route: "/previews/preview-04",
+  },
+  {
+    id: "05",
+    title: "Institutional Public Service",
+    description: "Pendekatan layanan publik yang formal, jelas, dan mudah dipahami.",
+    date: "22 SEP 2026",
+    route: "/previews/preview-05",
+  },
+  {
+    id: "06",
+    title: "Institutional Modernism",
+    description: "Modernisme institusional dengan grid kuat, hierarki jelas, dan visual profesional.",
+    date: "22 SEP 2026",
+    route: "/previews/preview-06",
+  },
+  {
+    id: "07",
+    title: "Contemporary Civic Platform",
+    description: "Platform civic modern yang menggabungkan data, layanan, dan identitas BINSIGHT.",
+    date: "22 SEP 2026",
+    route: "/previews/preview-07",
+  },
+  {
+    id: "08",
+    title: "Update Preview — SVG",
+    description: "Eksperimen lanjutan pada sistem visual, terutama ikonografi dan elemen SVG.",
+    date: "23 SEP 2026",
+    route: "/previews/preview-08",
+  },
+  {
+    id: "09",
+    title: "Update Preview — Version 2",
+    description: "Iterasi desain lanjutan dengan penyempurnaan layout dan visual interface.",
+    date: "23 SEP 2026",
+    route: "/previews/preview-09",
+  },
+  {
+    id: "10",
+    title: "Update Preview — Latest",
+    description: "Versi preview terbaru untuk eksplorasi arah visual BINSIGHT berikutnya.",
+    date: "23 SEP 2026",
+    route: "/previews/preview-10",
+  },
+  {
+    id: "11",
+    title: "Preview 11",
+    description: "Preview design 11.",
+    date: "24 SEP 2026",
+    route: "/previews/preview-11",
+  },
+  {
+    id: "12",
+    title: "Preview 12",
+    description: "Preview design 12.",
+    date: "24 SEP 2026",
+    route: "/previews/preview-12",
+  },
+  {
+    id: "13",
+    title: "Preview 13",
+    description: "Preview design 13.",
+    date: "24 SEP 2026",
+    route: "/previews/preview-13",
+  },
+  {
+    id: "14",
+    title: "Preview 14",
+    description: "Preview design 14.",
+    date: "24 SEP 2026",
+    route: "/previews/preview-14",
+  },
+];
+
+const currentYear = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="BINSIGHT preview navigation."
+    />
+    <meta name="theme-color" content="#f5f4ee" />
+    <title>BINSIGHT — Preview</title>
+
+    <style>
+      :root {
+        --bg: #f5f4ee;
+        --panel: #ffffff;
+        --ink: #171717;
+        --muted: #73736c;
+        --line: #d8d7cf;
+        --accent: #d85c3f;
+        --max: 980px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .page {
+        width: min(var(--max), calc(100% - 40px));
+        margin: 0 auto;
+        padding: 32px 0 48px;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--ink);
+      }
+
+      .brand {
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: .08em;
+      }
+
+      .header-meta {
+        color: var(--muted);
+        font-family: "SFMono-Regular", Consolas, monospace;
+        font-size: 10px;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+      }
+
+      .intro {
+        padding: 54px 0 28px;
+      }
+
+      .intro h1 {
+        margin: 0;
+        font-size: clamp(42px, 8vw, 76px);
+        line-height: .95;
+        letter-spacing: -.055em;
+      }
+
+      .intro p {
+        max-width: 640px;
+        margin: 18px 0 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.65;
+      }
+
+      .list-head {
+        display: grid;
+        grid-template-columns: 80px minmax(0, 1fr) 120px 90px;
+        gap: 20px;
+        padding: 12px 0;
+        border-top: 1px solid var(--ink);
+        border-bottom: 1px solid var(--line);
+        color: var(--muted);
+        font-family: "SFMono-Regular", Consolas, monospace;
+        font-size: 9px;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+      }
+
+      .list {
+        border-bottom: 1px solid var(--ink);
+      }
+
+      .item {
+        display: grid;
+        grid-template-columns: 80px minmax(0, 1fr) 120px 90px;
+        gap: 20px;
+        align-items: center;
+        min-height: 84px;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+        transition: background .16s ease, padding .16s ease;
+      }
+
+      .item:last-child {
+        border-bottom: 0;
+      }
+
+      .item:hover {
+        padding-inline: 12px;
+        background: rgba(255,255,255,.8);
+      }
+
+      .item-number,
+      .item-date,
+      .item-route {
+        font-family: "SFMono-Regular", Consolas, monospace;
+        font-size: 9px;
+        letter-spacing: .07em;
+        text-transform: uppercase;
+      }
+
+      .item-number {
+        color: var(--accent);
+      }
+
+      .item-content {
+        min-width: 0;
+      }
+
+      .item-title {
+        margin: 0;
+        font-size: 20px;
+        line-height: 1.2;
+        letter-spacing: -.025em;
+      }
+
+      .item-description {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .item-date,
+      .item-route {
+        color: var(--muted);
+      }
+
+      .item-route {
+        justify-self: end;
+        color: var(--ink);
+        font-weight: 700;
+      }
+
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        padding-top: 20px;
+        color: var(--muted);
+        font-family: "SFMono-Regular", Consolas, monospace;
+        font-size: 9px;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+      }
+
+      @media (max-width: 720px) {
+        .page {
+          width: min(100% - 24px, var(--max));
+          padding-top: 20px;
+        }
+
+        .header-meta {
+          font-size: 8px;
+        }
+
+        .intro {
+          padding: 38px 0 22px;
+        }
+
+        .list-head {
+          display: none;
+        }
+
+        .item {
+          grid-template-columns: 38px minmax(0, 1fr) auto;
+          gap: 14px;
+          min-height: 0;
+          padding: 17px 0;
+        }
+
+        .item:hover {
+          padding-inline: 8px;
+        }
+
+        .item-date {
+          display: none;
+        }
+
+        .item-route {
+          font-size: 8px;
+        }
+
+        .item-title {
+          font-size: 17px;
+        }
+
+        .item-description {
+          font-size: 11px;
+        }
+
+        .footer {
+          flex-direction: column;
+          gap: 6px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="page">
+      <header class="header">
+        <a class="brand" href="/">BINSIGHT</a>
+        <div class="header-meta">Preview Navigation / {currentYear}</div>
+      </header>
+
+      <section class="intro">
+        <h1>Preview List</h1>
+        <p>
+          Daftar cepat seluruh eksplorasi desain BINSIGHT. Pilih versi yang ingin dibuka.
+        </p>
+      </section>
+
+      <div class="list-head" aria-hidden="true">
+        <span>No.</span>
+        <span>Preview</span>
+        <span>Date</span>
+        <span>Open</span>
+      </div>
+
+      <nav class="list" aria-label="Daftar preview BINSIGHT">
+        {previews.map((preview) => (
+          <a class="item" href={preview.route}>
+            <span class="item-number">{preview.id}</span>
+
+            <span class="item-content">
+              <strong class="item-title">{preview.title}</strong>
+              <span class="item-description">{preview.description}</span>
+            </span>
+
+            <span class="item-date">{preview.date}</span>
+            <span class="item-route">OPEN ↗</span>
+          </a>
+        ))}
+      </nav>
+
+      <footer class="footer">
+        <span>BINSIGHT — Badung Waste Intelligence</span>
+        <span>14 Previews</span>
+      </footer>
+    </main>
+  </body>
+</html>

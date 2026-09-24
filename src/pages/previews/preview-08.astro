@@ -1,0 +1,3414 @@
+﻿---
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Building2,
+  ChartColumn,
+  FileText,
+  Map,
+  Menu,
+  Recycle,
+  X,
+} from "@lucide/astro";
+
+const BASE_URL = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
+
+const siteHref = (path: string) => {
+  if (
+    path.startsWith("http://") ||
+    path.startsWith("https://") ||
+    path.startsWith("mailto:") ||
+    path.startsWith("tel:") ||
+    path.startsWith("#") ||
+    path.startsWith("data:") ||
+    path.startsWith("javascript:")
+  ) {
+    return path;
+  }
+
+  if (path === "/") {
+    return `${BASE_URL}/`;
+  }
+
+  return `${BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+};
+
+const services = [
+  {
+    no: "01",
+    title: "Peta",
+    text: "Lihat persampahan berdasarkan lokasi dan wilayah di Kabupaten Badung.",
+    href: "/map",
+    icon: Map,
+  },
+  {
+    no: "02",
+    title: "Data",
+    text: "Temukan informasi persampahan dalam satu ruang yang mudah dibaca.",
+    href: "/dashboard",
+    icon: ChartColumn,
+  },
+  {
+    no: "03",
+    title: "Organisasi",
+    text: "Kenali pihak dan jaringan yang membentuk ekosistem persampahan.",
+    href: "/organizations",
+    icon: Building2,
+  },
+  {
+    no: "04",
+    title: "Material",
+    text: "Pahami berbagai kategori material dan karakter dasarnya.",
+    href: "/waste",
+    icon: Recycle,
+  },
+];
+
+const principles = [
+  {
+    no: "01",
+    title: "Kontekstual",
+    text: "Informasi ditempatkan bersama lokasi dan konteks yang relevan.",
+  },
+  {
+    no: "02",
+    title: "Terbuka",
+    text: "Informasi publik disusun agar mudah ditemukan dan dipahami.",
+  },
+  {
+    no: "03",
+    title: "Bertanggung jawab",
+    text: "Penyajian informasi memperhatikan sumber, konteks, dan penggunaannya.",
+  },
+];
+
+const areas = [
+  {
+    no: "01",
+    name: "Badung",
+    type: "KABUPATEN",
+    status: "TERSEDIA",
+  },
+  {
+    no: "02",
+    name: "Mengwi",
+    type: "KECAMATAN",
+    status: "CONTOH",
+  },
+  {
+    no: "03",
+    name: "Abiansemal",
+    type: "KECAMATAN",
+    status: "CONTOH",
+  },
+];
+
+const materials = [
+  ["01", "Organik", "ORG"],
+  ["02", "Anorganik", "ANR"],
+  ["03", "Bahan Berbahaya", "B3"],
+  ["04", "Elektronik", "ELK"],
+  ["05", "Residu", "RES"],
+];
+
+const currentYear = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>BINSIGHT â€” Badung Waste Intelligence</title>
+
+    <meta
+      name="description"
+      content="Platform informasi persampahan Kabupaten Badung untuk menemukan, memahami, dan melaporkan kondisi persampahan."
+    />
+
+    <meta
+      name="theme-color"
+      content="#f1eee7"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div class="site">
+
+      <!-- =====================================================
+           HEADER
+      ====================================================== -->
+
+      <header class="header">
+        <div class="page-width header__inner">
+
+          <a
+            href={siteHref("/")}
+            class="brand"
+            aria-label="BINSIGHT"
+          >
+            <span class="brand__symbol" aria-hidden="true">
+              <i></i>
+              <i></i>
+              <i></i>
+            </span>
+
+            <span class="brand__word">
+              BINSIGHT
+            </span>
+          </a>
+
+          <nav
+            class="desktop-nav"
+            aria-label="Navigasi utama"
+          >
+            <a
+              class="desktop-nav__active"
+              href={siteHref("/")}
+            >
+              Beranda
+            </a>
+
+            <a href={siteHref("/map")}>
+              Peta
+            </a>
+
+            <a href={siteHref("/dashboard")}>
+              Data
+            </a>
+
+            <a href={siteHref("/organizations")}>
+              Organisasi
+            </a>
+
+            <a href="#tentang">
+              Tentang
+            </a>
+          </nav>
+
+          <div class="header__end">
+
+            <span class="header__location">
+              BADUNG / BALI
+            </span>
+
+            <button
+              type="button"
+              class="menu-button"
+              aria-label="Buka menu"
+              aria-expanded="false"
+              aria-controls="mobile-nav"
+            >
+              <Menu
+                data-menu-open
+                size={20}
+                stroke-width={1.8}
+              />
+
+              <X
+                data-menu-close
+                size={20}
+                stroke-width={1.8}
+              />
+            </button>
+
+          </div>
+
+        </div>
+
+        <div
+          class="mobile-nav"
+          id="mobile-nav"
+        >
+          <div class="page-width mobile-nav__inner">
+
+            <a href={siteHref("/")}>
+              Beranda
+            </a>
+
+            <a href={siteHref("/map")}>
+              Peta
+            </a>
+
+            <a href={siteHref("/dashboard")}>
+              Data
+            </a>
+
+            <a href={siteHref("/organizations")}>
+              Organisasi
+            </a>
+
+            <a href="#tentang">
+              Tentang
+            </a>
+
+          </div>
+        </div>
+      </header>
+
+
+      <main>
+
+        <!-- ===================================================
+             HERO
+        ==================================================== -->
+
+        <section class="hero">
+          <div class="page-width hero__inner">
+
+            <div class="hero__rail">
+              <span>01</span>
+              <span>BINSIGHT</span>
+            </div>
+
+            <div class="hero__main">
+
+              <div class="eyebrow">
+                BADUNG WASTE INTELLIGENCE
+              </div>
+
+              <h1>
+                Kenali
+                <em>persampahan</em>
+                Badung.
+              </h1>
+
+              <div class="hero__lower">
+
+                <p>
+                  Platform informasi publik untuk menemukan,
+                  memahami, dan menghubungkan informasi persampahan
+                  Kabupaten Badung.
+                </p>
+
+                <div class="hero__actions">
+
+                  <a
+                    class="hero-button hero-button--dark"
+                    href={siteHref("/map")}
+                  >
+                    Jelajahi peta
+                    <ArrowRight
+                      size={18}
+                    />
+                  </a>
+
+                  <a
+                    class="hero-button hero-button--line"
+                    href={siteHref("/dashboard")}
+                  >
+                    Lihat data
+                    <ArrowUpRight
+                      size={17}
+                    />
+                  </a>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="hero__visual" aria-hidden="true">
+
+              <div class="hero__visual-top">
+                <span>WASTE</span>
+                <span>INTELLIGENCE</span>
+              </div>
+
+              <div class="hero__visual-word">
+                BADUNG
+              </div>
+
+              <div class="hero__visual-mark">
+                <span></span>
+                <span></span>
+              </div>
+
+              <div class="hero__visual-bottom">
+                <span>MAP</span>
+                <span>DATA</span>
+                <span>NETWORK</span>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- ===================================================
+             TICKER
+        ==================================================== -->
+
+        <div class="ticker">
+          <div class="page-width ticker__inner">
+            <span>INFORMASI</span>
+            <span>LOKASI</span>
+            <span>MATERIAL</span>
+            <span>ORGANISASI</span>
+            <span>EDUKASI</span>
+            <span>LAPORAN</span>
+          </div>
+        </div>
+
+
+        <!-- ===================================================
+             INTRO
+        ==================================================== -->
+
+        <section class="intro">
+          <div class="page-width intro__grid">
+
+            <div class="section-index">
+              <span>02</span>
+              <small>TENTANG</small>
+            </div>
+
+            <div class="intro__copy">
+
+              <h2>
+                Persampahan
+                <span>perlu dilihat</span>
+                secara utuh.
+              </h2>
+
+              <div class="intro__description">
+
+                <p>
+                  Informasi tentang sampah tidak hanya berbicara
+                  tentang material. Ia juga berkaitan dengan tempat,
+                  manusia, organisasi, dan kondisi di sekitarnya.
+                </p>
+
+                <p>
+                  BINSIGHT menyatukan konteks tersebut dalam satu
+                  platform agar informasi publik dapat dipahami
+                  dengan lebih jelas.
+                </p>
+
+              </div>
+
+            </div>
+
+            <div class="intro__note">
+              <span>THE IDEA</span>
+
+              <strong>
+                MAP + DATA + PEOPLE
+              </strong>
+
+              <strong>
+                + MATERIAL
+              </strong>
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- ===================================================
+             SERVICES
+        ==================================================== -->
+
+        <section class="services">
+          <div class="page-width">
+
+            <div class="section-head">
+
+              <div class="section-index">
+                <span>03</span>
+                <small>EKSPLORASI</small>
+              </div>
+
+              <div class="section-head__copy">
+
+                <h2>
+                  Empat cara
+                  <span>untuk mulai.</span>
+                </h2>
+
+                <p>
+                  Gunakan BINSIGHT sesuai informasi yang sedang
+                  Anda cari.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="service-list">
+
+              {
+                services.map((service) => {
+                  const Icon = service.icon;
+
+                  return (
+                    <a
+                      href={siteHref(service.href)}
+                      class="service-row"
+                    >
+
+                      <span class="service-row__number">
+                        {service.no}
+                      </span>
+
+                      <span class="service-row__icon">
+                        <Icon
+                          size={22}
+                          stroke-width={1.7}
+                        />
+                      </span>
+
+                      <span class="service-row__title">
+                        {service.title}
+                      </span>
+
+                      <span class="service-row__text">
+                        {service.text}
+                      </span>
+
+                      <ArrowUpRight
+                        class="service-row__arrow"
+                        size={20}
+                        stroke-width={1.6}
+                      />
+
+                    </a>
+                  );
+                })
+              }
+
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- ===================================================
+             METHOD
+        ==================================================== -->
+
+        <section class="method">
+          <div class="page-width">
+
+            <div class="method__intro">
+
+              <div class="section-index section-index--light">
+                <span>04</span>
+                <small>CARA KERJA</small>
+              </div>
+
+              <div>
+                <h2>
+                  Dari pertanyaan
+                  <span>menjadi konteks.</span>
+                </h2>
+
+                <p>
+                  Pengalaman BINSIGHT dimulai dari kebutuhan sederhana:
+                  menemukan informasi, memahami isinya, kemudian melihat
+                  hubungan yang lebih luas.
+                </p>
+              </div>
+
+            </div>
+
+
+            <div class="method__steps">
+
+              <article>
+                <span>01</span>
+
+                <h3>
+                  Temukan
+                </h3>
+
+                <p>
+                  Cari lokasi, wilayah, data, atau informasi
+                  yang ingin diketahui.
+                </p>
+
+                <div class="method__line"></div>
+              </article>
+
+
+              <article>
+                <span>02</span>
+
+                <h3>
+                  Pahami
+                </h3>
+
+                <p>
+                  Baca informasi dan lihat konteks yang
+                  berada di baliknya.
+                </p>
+
+                <div class="method__line"></div>
+              </article>
+
+
+              <article>
+                <span>03</span>
+
+                <h3>
+                  Hubungkan
+                </h3>
+
+                <p>
+                  Hubungkan informasi dengan wilayah,
+                  organisasi, dan material.
+                </p>
+              </article>
+
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- ===================================================
+             COVERAGE
+        ==================================================== -->
+
+        <section class="coverage">
+          <div class="page-width">
+
+            <div class="coverage__head">
+
+              <div class="section-index">
+                <span>05</span>
+                <small>WILAYAH</small>
+              </div>
+
+              <div>
+                <h2>
+                  Membaca Badung
+                  <span>dari dekat.</span>
+                </h2>
+
+                <p>
+                  Informasi dapat dilihat berdasarkan wilayah
+                  untuk memahami konteks lokal secara lebih dekat.
+                </p>
+              </div>
+
+            </div>
+
+
+            <div class="area-table">
+
+              <div class="area-table__head">
+                <span>NO.</span>
+                <span>NAMA</span>
+                <span>TIPE</span>
+                <span>STATUS</span>
+                <span></span>
+              </div>
+
+              {
+                areas.map((area) => (
+                  <a
+                    href={siteHref("/map")}
+                    class="area-table__row"
+                  >
+                    <span>{area.no}</span>
+
+                    <strong>
+                      {area.name}
+                    </strong>
+
+                    <span>
+                      {area.type}
+                    </span>
+
+                    <span class="area-status">
+                      {area.status}
+                    </span>
+
+                    <ArrowRight
+                      size={18}
+                      stroke-width={1.7}
+                    />
+                  </a>
+                ))
+              }
+
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- ===================================================
+             MATERIAL
+        ==================================================== -->
+
+        <section class="material">
+          <div class="page-width material__grid">
+
+            <div class="section-index">
+              <span>06</span>
+              <small>MATERIAL</small>
+            </div>
+
+            <div class="material__content">
+
+              <div class="material__intro">
+
+                <h2>
+                  Kenali
+                  <span>materialnya.</span>
+                </h2>
+
+                <p>
+                  Mengenal kategori sampah membantu memahami bahwa
+                  setiap material memiliki karakter dan kebutuhan
+                  penanganan yang berbeda.
+                </p>
+
+                <a
+                  href={siteHref("/waste")}
+                  class="material__link"
+                >
+                  Lihat semua kategori
+                  <ArrowRight size={17} />
+                </a>
+
+              </div>
+
+
+              <div class="material__list">
+
+                {
+                  materials.map((material) => (
+                    <a
+                      href={siteHref("/waste")}
+                      class="material__row"
+                    >
+
+                      <span>
+                        {material[0]}
+                      </span>
+
+                      <strong>
+                        {material[1]}
+                      </strong>
+
+                      <small>
+                        {material[2]}
+                      </small>
+
+                      <ArrowUpRight
+                        size={18}
+                        stroke-width={1.6}
+                      />
+
+                    </a>
+                  ))
+                }
+
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- ===================================================
+             PRINCIPLES
+        ==================================================== -->
+
+        <section
+          class="principles"
+          id="tentang"
+        >
+          <div class="page-width">
+
+            <div class="principles__head">
+
+              <div class="section-index">
+                <span>07</span>
+                <small>PRINSIP</small>
+              </div>
+
+              <div>
+                <h2>
+                  Dibangun untuk
+                  <span>digunakan.</span>
+                </h2>
+
+                <p>
+                  BINSIGHT menjaga agar pengalaman informasi tetap
+                  sederhana, relevan, dan bertanggung jawab.
+                </p>
+              </div>
+
+            </div>
+
+
+            <div class="principle-list">
+
+              {
+                principles.map((principle) => (
+                  <article class="principle">
+
+                    <span class="principle__number">
+                      {principle.no}
+                    </span>
+
+                    <h3>
+                      {principle.title}
+                    </h3>
+
+                    <p>
+                      {principle.text}
+                    </p>
+
+                  </article>
+                ))
+              }
+
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- ===================================================
+             FINAL
+        ==================================================== -->
+
+        <section class="final">
+          <div class="page-width final__inner">
+
+            <div class="final__top">
+              <span>08 / BINSIGHT</span>
+
+              <span>
+                BADUNG WASTE INTELLIGENCE
+              </span>
+            </div>
+
+            <div class="final__content">
+
+              <h2>
+                Kenali.
+                <em>Pahami.</em>
+                Jaga Badung.
+              </h2>
+
+              <a
+                href={siteHref("/map")}
+                class="final__button"
+              >
+                Jelajahi BINSIGHT
+                <ArrowUpRight
+                  size={20}
+                />
+              </a>
+
+            </div>
+
+          </div>
+        </section>
+
+      </main>
+
+
+      <!-- =====================================================
+           FOOTER
+      ====================================================== -->
+
+      <footer class="footer">
+        <div class="page-width footer__main">
+
+          <div class="footer__identity">
+
+            <a
+              href={siteHref("/")}
+              class="brand brand--footer"
+            >
+              <span
+                class="brand__symbol"
+                aria-hidden="true"
+              >
+                <i></i>
+                <i></i>
+                <i></i>
+              </span>
+
+              <span class="brand__word">
+                BINSIGHT
+              </span>
+            </a>
+
+            <p>
+              Platform informasi persampahan
+              Kabupaten Badung.
+            </p>
+
+          </div>
+
+
+          <div class="footer__group">
+
+            <span>
+              PLATFORM
+            </span>
+
+            <a href={siteHref("/map")}>
+              Peta
+            </a>
+
+            <a href={siteHref("/dashboard")}>
+              Data
+            </a>
+
+            <a href={siteHref("/organizations")}>
+              Organisasi
+            </a>
+
+            <a href={siteHref("/waste")}>
+              Material
+            </a>
+
+          </div>
+
+
+          <div class="footer__group">
+
+            <span>
+              INFORMASI
+            </span>
+
+            <a href="#tentang">
+              Tentang BINSIGHT
+            </a>
+
+            <a href={siteHref("/map")}>
+              Eksplorasi
+            </a>
+
+          </div>
+
+        </div>
+
+
+        <div class="page-width footer__bottom">
+
+          <span>
+            Â© {currentYear} BINSIGHT
+          </span>
+
+          <span>
+            BADUNG / BALI
+          </span>
+
+          <span>
+            PUBLIC INFORMATION PLATFORM
+          </span>
+
+        </div>
+      </footer>
+
+
+      <!-- =====================================================
+           FLOATING REPORT
+      ====================================================== -->
+
+      <a
+        class="floating-report"
+        href={siteHref("/reports/create")}
+        aria-label="Buat laporan masyarakat"
+      >
+        <FileText
+          size={18}
+          stroke-width={1.8}
+        />
+
+        <span>
+          <small>
+            LAPORAN MASYARAKAT
+          </small>
+
+          <strong>
+            Buat laporan
+          </strong>
+        </span>
+
+        <ArrowUpRight
+          size={17}
+          stroke-width={1.7}
+        />
+      </a>
+
+    </div>
+
+
+    <script>
+      const menuButton =
+        document.querySelector<HTMLButtonElement>(
+          ".menu-button"
+        );
+
+      const mobileNav =
+        document.querySelector<HTMLElement>(
+          ".mobile-nav"
+        );
+
+      const menuOpen =
+        document.querySelector<SVGElement>(
+          "[data-menu-open]"
+        );
+
+      const menuClose =
+        document.querySelector<SVGElement>(
+          "[data-menu-close]"
+        );
+
+      const updateMenu = (open: boolean) => {
+        if (!menuButton || !mobileNav) {
+          return;
+        }
+
+        menuButton.setAttribute(
+          "aria-expanded",
+          String(open)
+        );
+
+        menuButton.setAttribute(
+          "aria-label",
+          open ? "Tutup menu" : "Buka menu"
+        );
+
+        mobileNav.classList.toggle(
+          "mobile-nav--open",
+          open
+        );
+
+        if (menuOpen instanceof HTMLElement) {
+          menuOpen.style.display = open
+            ? "none"
+            : "block";
+        }
+
+        if (menuClose instanceof HTMLElement) {
+          menuClose.style.display = open
+            ? "block"
+            : "none";
+        }
+      };
+
+      updateMenu(false);
+
+      menuButton?.addEventListener(
+        "click",
+        () => {
+          const open =
+            menuButton.getAttribute(
+              "aria-expanded"
+            ) === "true";
+
+          updateMenu(!open);
+        }
+      );
+
+      document
+        .querySelectorAll<HTMLAnchorElement>(
+          ".mobile-nav a"
+        )
+        .forEach((link) => {
+          link.addEventListener(
+            "click",
+            () => updateMenu(false)
+          );
+        });
+
+      window.addEventListener(
+        "resize",
+        () => {
+          if (window.innerWidth > 900) {
+            updateMenu(false);
+          }
+        }
+      );
+    </script>
+
+
+    <style>
+      :root {
+        --paper: #f1eee7;
+        --paper-dark: #e8e4db;
+        --white: #faf9f5;
+
+        --ink: #151515;
+        --muted: #68645d;
+        --line: #cfcac0;
+
+        --forest: #183d32;
+        --forest-soft: #294d40;
+
+        --coral: #e85b3c;
+        --coral-soft: #f2c3b7;
+
+        --page: 1240px;
+      }
+
+
+      /* =====================================================
+         RESET
+      ====================================================== */
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+
+        background: var(--paper);
+
+        color: var(--ink);
+
+        font-family: "Manrope", sans-serif;
+
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      svg {
+        flex-shrink: 0;
+      }
+
+      .site {
+        min-height: 100vh;
+        overflow: clip;
+      }
+
+      .page-width {
+        width: min(
+          calc(100% - 52px),
+          var(--page)
+        );
+
+        margin-inline: auto;
+      }
+
+
+      /* =====================================================
+         HEADER
+      ====================================================== */
+
+      .header {
+        position: sticky;
+
+        top: 0;
+
+        z-index: 100;
+
+        background:
+          rgba(241, 238, 231, 0.94);
+
+        backdrop-filter: blur(15px);
+
+        border-bottom:
+          1px solid
+          var(--line);
+      }
+
+      .header__inner {
+        min-height: 76px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 30px;
+      }
+
+      .brand {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 12px;
+
+        flex-shrink: 0;
+      }
+
+      .brand__symbol {
+        width: 29px;
+        height: 29px;
+
+        display: grid;
+
+        grid-template-columns:
+          repeat(3, 1fr);
+
+        grid-template-rows:
+          repeat(3, 1fr);
+
+        gap: 2px;
+      }
+
+      .brand__symbol i {
+        display: block;
+
+        background: var(--ink);
+      }
+
+      .brand__symbol i:nth-child(2) {
+        background: var(--coral);
+
+        grid-column: 2 / 4;
+      }
+
+      .brand__symbol i:nth-child(3) {
+        background: var(--forest);
+
+        grid-row: 2 / 4;
+      }
+
+      .brand__word {
+        font-size: 15px;
+
+        line-height: 1;
+
+        font-weight: 800;
+
+        letter-spacing: -0.035em;
+      }
+
+      .desktop-nav {
+        display: flex;
+
+        align-items: center;
+
+        gap: 30px;
+
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .desktop-nav a {
+        position: relative;
+
+        color: #656159;
+
+        font-size: 12px;
+
+        font-weight: 600;
+
+        transition:
+          color 160ms ease;
+      }
+
+      .desktop-nav a:hover,
+      .desktop-nav__active {
+        color: var(--ink);
+      }
+
+      .desktop-nav__active::after {
+        content: "";
+
+        position: absolute;
+
+        left: 0;
+        right: 0;
+
+        bottom: -10px;
+
+        height: 2px;
+
+        background: var(--coral);
+      }
+
+      .header__end {
+        display: flex;
+
+        align-items: center;
+
+        gap: 20px;
+      }
+
+      .header__location {
+        color: #77736b;
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 8px;
+
+        letter-spacing: 0.09em;
+
+        white-space: nowrap;
+      }
+
+      .menu-button {
+        width: 38px;
+        height: 38px;
+
+        display: none;
+
+        align-items: center;
+        justify-content: center;
+
+        padding: 0;
+
+        border: 1px solid var(--line);
+
+        background: transparent;
+
+        color: var(--ink);
+
+        cursor: pointer;
+      }
+
+      .menu-button [data-menu-close] {
+        display: none;
+      }
+
+      .mobile-nav {
+        display: none;
+
+        border-top:
+          1px solid
+          var(--line);
+      }
+
+      .mobile-nav__inner {
+        padding: 7px 0 18px;
+      }
+
+      .mobile-nav a {
+        min-height: 52px;
+
+        display: flex;
+
+        align-items: center;
+
+        border-bottom:
+          1px solid
+          var(--line);
+
+        font-size: 14px;
+
+        font-weight: 700;
+      }
+
+
+      /* =====================================================
+         HERO
+      ====================================================== */
+
+      .hero {
+        background: var(--paper);
+
+        border-bottom:
+          1px solid
+          var(--line);
+      }
+
+      .hero__inner {
+        min-height: 720px;
+
+        display: grid;
+
+        grid-template-columns:
+          52px
+          minmax(0, 1fr)
+          minmax(280px, 0.42fr);
+
+        column-gap: 38px;
+
+        align-items: stretch;
+      }
+
+      .hero__rail {
+        padding-top: 44px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+
+        gap: 11px;
+
+        border-right:
+          1px solid
+          var(--line);
+
+        color: #89857d;
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 8px;
+
+        letter-spacing: 0.06em;
+      }
+
+      .hero__rail span:first-child {
+        color: var(--coral);
+      }
+
+      .hero__rail span:last-child {
+        writing-mode: vertical-rl;
+
+        transform: rotate(180deg);
+      }
+
+      .hero__main {
+        min-width: 0;
+
+        padding:
+          92px
+          20px
+          82px
+          0;
+
+        display: flex;
+
+        flex-direction: column;
+
+        justify-content: center;
+      }
+
+      .eyebrow {
+        margin-bottom: 29px;
+
+        color: var(--forest);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 9px;
+
+        letter-spacing: 0.1em;
+      }
+
+      .hero h1 {
+        max-width: 800px;
+
+        margin: 0;
+
+        font-size: clamp(
+          64px,
+          8vw,
+          118px
+        );
+
+        line-height: 0.89;
+
+        letter-spacing: -0.075em;
+
+        font-weight: 700;
+      }
+
+      .hero h1 em {
+        display: block;
+
+        color: var(--coral);
+
+        font-family: "Playfair Display", serif;
+
+        font-weight: 600;
+
+        font-style: normal;
+
+        letter-spacing: -0.06em;
+      }
+
+      .hero__lower {
+        max-width: 770px;
+
+        margin-top: 52px;
+
+        display: grid;
+
+        grid-template-columns:
+          minmax(0, 1fr)
+          auto;
+
+        gap: 48px;
+
+        align-items: end;
+      }
+
+      .hero__lower p {
+        max-width: 500px;
+
+        margin: 0;
+
+        color: var(--muted);
+
+        font-size: 16px;
+
+        line-height: 1.75;
+      }
+
+      .hero__actions {
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+
+        flex-wrap: wrap;
+      }
+
+      .hero-button {
+        min-height: 49px;
+
+        padding:
+          0
+          17px;
+
+        display: inline-flex;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 10px;
+
+        font-size: 11px;
+
+        font-weight: 800;
+
+        white-space: nowrap;
+
+        transition:
+          background 160ms ease,
+          color 160ms ease,
+          border-color 160ms ease;
+      }
+
+      .hero-button--dark {
+        background: var(--ink);
+
+        color: white;
+      }
+
+      .hero-button--dark:hover {
+        background: var(--forest);
+      }
+
+      .hero-button--line {
+        border:
+          1px solid
+          var(--line);
+      }
+
+      .hero-button--line:hover {
+        border-color: var(--ink);
+      }
+
+      .hero__visual {
+        min-width: 0;
+
+        position: relative;
+
+        margin-top: 30px;
+        margin-bottom: 30px;
+
+        padding: 27px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        justify-content: space-between;
+
+        overflow: hidden;
+
+        background: var(--forest);
+
+        color: white;
+      }
+
+      .hero__visual-top {
+        display: flex;
+
+        justify-content: space-between;
+
+        color:
+          rgba(255, 255, 255, 0.46);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 8px;
+
+        letter-spacing: 0.08em;
+      }
+
+      .hero__visual-word {
+        margin-left: -8px;
+
+        color:
+          rgba(255, 255, 255, 0.92);
+
+        font-size: clamp(
+          58px,
+          6vw,
+          92px
+        );
+
+        line-height: 0.82;
+
+        letter-spacing: -0.08em;
+
+        font-weight: 800;
+
+        writing-mode: vertical-rl;
+
+        transform: rotate(180deg);
+      }
+
+      .hero__visual-mark {
+        position: absolute;
+
+        right: 38px;
+        top: 50%;
+
+        width: 120px;
+        height: 120px;
+
+        border:
+          1px solid
+          rgba(255, 255, 255, 0.24);
+
+        transform:
+          translateY(-50%);
+      }
+
+      .hero__visual-mark::before,
+      .hero__visual-mark::after {
+        content: "";
+
+        position: absolute;
+
+        background:
+          rgba(255, 255, 255, 0.15);
+      }
+
+      .hero__visual-mark::before {
+        top: 50%;
+        left: 0;
+        right: 0;
+
+        height: 1px;
+      }
+
+      .hero__visual-mark::after {
+        top: 0;
+        bottom: 0;
+        left: 50%;
+
+        width: 1px;
+      }
+
+      .hero__visual-mark span {
+        position: absolute;
+
+        width: 30px;
+        height: 30px;
+
+        top: 50%;
+        left: 50%;
+
+        background: var(--coral);
+
+        transform:
+          translate(-50%, -50%);
+      }
+
+      .hero__visual-mark span:last-child {
+        width: 11px;
+        height: 11px;
+
+        background: var(--paper);
+      }
+
+      .hero__visual-bottom {
+        display: flex;
+
+        gap: 14px;
+
+        color:
+          rgba(255, 255, 255, 0.52);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 7px;
+
+        letter-spacing: 0.08em;
+      }
+
+
+      /* =====================================================
+         TICKER
+      ====================================================== */
+
+      .ticker {
+        background: var(--coral);
+
+        color: white;
+      }
+
+      .ticker__inner {
+        min-height: 47px;
+
+        display: grid;
+
+        grid-template-columns:
+          repeat(6, 1fr);
+
+        align-items: center;
+      }
+
+      .ticker__inner span {
+        text-align: center;
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 8px;
+
+        letter-spacing: 0.08em;
+      }
+
+      .ticker__inner span + span {
+        border-left:
+          1px solid
+          rgba(255, 255, 255, 0.22);
+      }
+
+
+      /* =====================================================
+         SHARED
+      ====================================================== */
+
+      .section-index {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 8px;
+
+        padding-top: 5px;
+      }
+
+      .section-index span {
+        color: var(--coral);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 10px;
+      }
+
+      .section-index small {
+        color: #8a867e;
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 7px;
+
+        letter-spacing: 0.08em;
+      }
+
+
+      /* =====================================================
+         INTRO
+      ====================================================== */
+
+      .intro {
+        padding: 125px 0;
+
+        background: var(--white);
+
+        border-bottom:
+          1px solid
+          var(--line);
+      }
+
+      .intro__grid {
+        display: grid;
+
+        grid-template-columns:
+          180px
+          minmax(0, 1fr)
+          185px;
+
+        gap: 45px;
+
+        align-items: start;
+      }
+
+      .intro__copy h2 {
+        max-width: 790px;
+
+        margin: 0;
+
+        font-size: clamp(
+          47px,
+          5.8vw,
+          78px
+        );
+
+        line-height: 0.96;
+
+        letter-spacing: -0.065em;
+
+        font-weight: 700;
+      }
+
+      .intro__copy h2 span {
+        display: block;
+
+        color: var(--forest);
+      }
+
+      .intro__description {
+        max-width: 720px;
+
+        margin-top: 38px;
+
+        display: grid;
+
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+
+        gap: 35px;
+      }
+
+      .intro__description p {
+        margin: 0;
+
+        color: var(--muted);
+
+        font-size: 14px;
+
+        line-height: 1.8;
+      }
+
+      .intro__note {
+        padding-top: 6px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 9px;
+
+        border-top:
+          2px solid
+          var(--forest);
+      }
+
+      .intro__note span {
+        margin-bottom: 8px;
+
+        color: #8a867e;
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 7px;
+
+        letter-spacing: 0.08em;
+      }
+
+      .intro__note strong {
+        color: var(--forest);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 9px;
+
+        line-height: 1.3;
+
+        letter-spacing: 0.04em;
+      }
+
+
+      /* =====================================================
+         SERVICES
+      ====================================================== */
+
+      .services {
+        padding: 125px 0;
+
+        background: var(--paper);
+      }
+
+      .section-head {
+        display: grid;
+
+        grid-template-columns:
+          180px
+          minmax(0, 1fr);
+
+        gap: 45px;
+
+        margin-bottom: 61px;
+      }
+
+      .section-head__copy h2 {
+        margin: 0;
+
+        font-size: clamp(
+          48px,
+          5.4vw,
+          73px
+        );
+
+        line-height: 0.96;
+
+        letter-spacing: -0.065em;
+
+        font-weight: 700;
+      }
+
+      .section-head__copy h2 span {
+        color: var(--coral);
+      }
+
+      .section-head__copy p {
+        max-width: 530px;
+
+        margin: 24px 0 0;
+
+        color: var(--muted);
+
+        font-size: 15px;
+
+        line-height: 1.7;
+      }
+
+      .service-list {
+        border-top:
+          1px solid
+          var(--ink);
+      }
+
+      .service-row {
+        min-height: 136px;
+
+        display: grid;
+
+        grid-template-columns:
+          80px
+          52px
+          220px
+          minmax(0, 1fr)
+          40px;
+
+        align-items: center;
+
+        column-gap: 22px;
+
+        border-bottom:
+          1px solid
+          var(--line);
+
+        transition:
+          background 160ms ease,
+          padding 160ms ease;
+      }
+
+      .service-row:hover {
+        padding-inline: 14px;
+
+        background: var(--paper-dark);
+      }
+
+      .service-row__number {
+        color: #8c8880;
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 9px;
+      }
+
+      .service-row__icon {
+        width: 45px;
+        height: 45px;
+
+        display: grid;
+
+        place-items: center;
+
+        background: var(--forest);
+
+        color: white;
+      }
+
+      .service-row__title {
+        font-size: 28px;
+
+        line-height: 1.1;
+
+        letter-spacing: -0.035em;
+
+        font-weight: 700;
+      }
+
+      .service-row__text {
+        max-width: 520px;
+
+        color: var(--muted);
+
+        font-size: 13px;
+
+        line-height: 1.7;
+      }
+
+      .service-row__arrow {
+        justify-self: end;
+
+        color: var(--coral);
+      }
+
+
+      /* =====================================================
+         METHOD
+      ====================================================== */
+
+      .method {
+        padding: 125px 0;
+
+        background: var(--forest);
+
+        color: white;
+      }
+
+      .section-index--light span {
+        color: var(--coral-soft);
+      }
+
+      .section-index--light small {
+        color:
+          rgba(255, 255, 255, 0.42);
+      }
+
+      .method__intro {
+        display: grid;
+
+        grid-template-columns:
+          180px
+          minmax(0, 730px);
+
+        gap: 45px;
+
+        margin-bottom: 75px;
+      }
+
+      .method__intro h2 {
+        margin: 0;
+
+        font-size: clamp(
+          47px,
+          5.3vw,
+          72px
+        );
+
+        line-height: 0.96;
+
+        letter-spacing: -0.065em;
+
+        font-weight: 700;
+      }
+
+      .method__intro h2 span {
+        display: block;
+
+        color: var(--coral-soft);
+      }
+
+      .method__intro p {
+        max-width: 600px;
+
+        margin: 27px 0 0;
+
+        color:
+          rgba(255, 255, 255, 0.62);
+
+        font-size: 15px;
+
+        line-height: 1.75;
+      }
+
+      .method__steps {
+        display: grid;
+
+        grid-template-columns:
+          repeat(3, minmax(0, 1fr));
+
+        border-top:
+          1px solid
+          rgba(255, 255, 255, 0.16);
+      }
+
+      .method__steps article {
+        position: relative;
+
+        min-height: 305px;
+
+        padding: 26px 28px 30px;
+
+        border-right:
+          1px solid
+          rgba(255, 255, 255, 0.12);
+      }
+
+      .method__steps article:last-child {
+        border-right: 0;
+      }
+
+      .method__steps article > span {
+        color:
+          rgba(255, 255, 255, 0.38);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 9px;
+      }
+
+      .method__steps h3 {
+        margin: 72px 0 0;
+
+        font-size: 31px;
+
+        line-height: 1;
+
+        letter-spacing: -0.045em;
+      }
+
+      .method__steps p {
+        max-width: 310px;
+
+        margin: 15px 0 0;
+
+        color:
+          rgba(255, 255, 255, 0.53);
+
+        font-size: 13px;
+
+        line-height: 1.7;
+      }
+
+      .method__line {
+        position: absolute;
+
+        bottom: 0;
+        left: 28px;
+
+        width: 42px;
+        height: 2px;
+
+        background: var(--coral);
+      }
+
+
+      /* =====================================================
+         COVERAGE
+      ====================================================== */
+
+      .coverage {
+        padding: 125px 0;
+
+        background: var(--white);
+      }
+
+      .coverage__head {
+        display: grid;
+
+        grid-template-columns:
+          180px
+          minmax(0, 1fr);
+
+        gap: 45px;
+
+        margin-bottom: 61px;
+      }
+
+      .coverage__head h2 {
+        margin: 0;
+
+        font-size: clamp(
+          48px,
+          5.4vw,
+          73px
+        );
+
+        line-height: 0.96;
+
+        letter-spacing: -0.065em;
+
+        font-weight: 700;
+      }
+
+      .coverage__head h2 span {
+        display: block;
+
+        color: var(--forest);
+      }
+
+      .coverage__head p {
+        max-width: 560px;
+
+        margin: 23px 0 0;
+
+        color: var(--muted);
+
+        font-size: 15px;
+
+        line-height: 1.75;
+      }
+
+      .area-table {
+        border-top:
+          1px solid
+          var(--ink);
+      }
+
+      .area-table__head,
+      .area-table__row {
+        display: grid;
+
+        grid-template-columns:
+          90px
+          minmax(0, 1fr)
+          190px
+          160px
+          40px;
+
+        align-items: center;
+
+        column-gap: 20px;
+      }
+
+      .area-table__head {
+        min-height: 45px;
+
+        border-bottom:
+          1px solid
+          var(--line);
+
+        color: #89857d;
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 7px;
+
+        letter-spacing: 0.08em;
+      }
+
+      .area-table__row {
+        min-height: 92px;
+
+        border-bottom:
+          1px solid
+          var(--line);
+
+        transition:
+          background 160ms ease;
+      }
+
+      .area-table__row:hover {
+        background: var(--paper);
+      }
+
+      .area-table__row > span:first-child {
+        color: #8b877f;
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 9px;
+      }
+
+      .area-table__row strong {
+        font-size: 21px;
+
+        letter-spacing: -0.03em;
+      }
+
+      .area-table__row > span:nth-child(3) {
+        color: var(--muted);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 8px;
+
+        letter-spacing: 0.05em;
+      }
+
+      .area-status {
+        color: var(--forest);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 8px;
+
+        letter-spacing: 0.05em;
+      }
+
+      .area-table__row > svg {
+        justify-self: end;
+
+        color: var(--coral);
+      }
+
+
+      /* =====================================================
+         MATERIAL
+      ====================================================== */
+
+      .material {
+        padding: 125px 0;
+
+        background: var(--paper-dark);
+      }
+
+      .material__grid {
+        display: grid;
+
+        grid-template-columns:
+          180px
+          minmax(0, 1fr);
+
+        gap: 45px;
+      }
+
+      .material__content {
+        display: grid;
+
+        grid-template-columns:
+          minmax(0, 0.72fr)
+          minmax(0, 1.28fr);
+
+        gap: 80px;
+      }
+
+      .material__intro h2 {
+        margin: 0;
+
+        font-size: clamp(
+          48px,
+          5.2vw,
+          71px
+        );
+
+        line-height: 0.95;
+
+        letter-spacing: -0.065em;
+
+        font-weight: 700;
+      }
+
+      .material__intro h2 span {
+        display: block;
+
+        color: var(--coral);
+      }
+
+      .material__intro p {
+        max-width: 400px;
+
+        margin: 25px 0 0;
+
+        color: var(--muted);
+
+        font-size: 14px;
+
+        line-height: 1.78;
+      }
+
+      .material__link {
+        margin-top: 30px;
+
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 8px;
+
+        color: var(--forest);
+
+        font-size: 11px;
+
+        font-weight: 800;
+      }
+
+      .material__link:hover {
+        text-decoration: underline;
+
+        text-underline-offset: 4px;
+      }
+
+      .material__list {
+        border-top:
+          1px solid
+          var(--ink);
+      }
+
+      .material__row {
+        min-height: 92px;
+
+        display: grid;
+
+        grid-template-columns:
+          60px
+          minmax(0, 1fr)
+          70px
+          30px;
+
+        align-items: center;
+
+        gap: 18px;
+
+        border-bottom:
+          1px solid
+          rgba(21, 21, 21, 0.18);
+      }
+
+      .material__row > span {
+        color: #8a867e;
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 9px;
+      }
+
+      .material__row strong {
+        font-size: 18px;
+
+        letter-spacing: -0.02em;
+      }
+
+      .material__row small {
+        color: var(--forest);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 8px;
+
+        text-align: right;
+      }
+
+      .material__row svg {
+        justify-self: end;
+
+        color: var(--coral);
+      }
+
+
+      /* =====================================================
+         PRINCIPLES
+      ====================================================== */
+
+      .principles {
+        padding: 125px 0;
+
+        background: var(--white);
+      }
+
+      .principles__head {
+        display: grid;
+
+        grid-template-columns:
+          180px
+          minmax(0, 1fr);
+
+        gap: 45px;
+
+        margin-bottom: 65px;
+      }
+
+      .principles__head h2 {
+        margin: 0;
+
+        font-size: clamp(
+          48px,
+          5.2vw,
+          71px
+        );
+
+        line-height: 0.95;
+
+        letter-spacing: -0.065em;
+
+        font-weight: 700;
+      }
+
+      .principles__head h2 span {
+        color: var(--forest);
+      }
+
+      .principles__head p {
+        max-width: 540px;
+
+        margin: 24px 0 0;
+
+        color: var(--muted);
+
+        font-size: 14px;
+
+        line-height: 1.78;
+      }
+
+      .principle-list {
+        display: grid;
+
+        grid-template-columns:
+          repeat(3, minmax(0, 1fr));
+
+        border-top:
+          1px solid
+          var(--ink);
+      }
+
+      .principle {
+        min-height: 275px;
+
+        padding:
+          25px
+          30px
+          30px
+          0;
+
+        border-right:
+          1px solid
+          var(--line);
+      }
+
+      .principle + .principle {
+        padding-left: 28px;
+      }
+
+      .principle:last-child {
+        border-right: 0;
+      }
+
+      .principle__number {
+        color: var(--coral);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 9px;
+      }
+
+      .principle h3 {
+        margin: 72px 0 0;
+
+        font-size: 28px;
+
+        line-height: 1;
+
+        letter-spacing: -0.04em;
+      }
+
+      .principle p {
+        max-width: 300px;
+
+        margin: 14px 0 0;
+
+        color: var(--muted);
+
+        font-size: 13px;
+
+        line-height: 1.72;
+      }
+
+
+      /* =====================================================
+         FINAL
+      ====================================================== */
+
+      .final {
+        padding: 40px 0 0;
+
+        background: var(--coral);
+      }
+
+      .final__inner {
+        min-height: 430px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        justify-content: space-between;
+
+        padding:
+          35px
+          0
+          55px;
+      }
+
+      .final__top {
+        display: flex;
+
+        justify-content: space-between;
+
+        color:
+          rgba(255, 255, 255, 0.66);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 8px;
+
+        letter-spacing: 0.08em;
+      }
+
+      .final__content {
+        display: flex;
+
+        align-items: flex-end;
+        justify-content: space-between;
+
+        gap: 50px;
+      }
+
+      .final__content h2 {
+        max-width: 850px;
+
+        margin: 0;
+
+        color: white;
+
+        font-size: clamp(
+          54px,
+          7vw,
+          98px
+        );
+
+        line-height: 0.9;
+
+        letter-spacing: -0.07em;
+
+        font-weight: 700;
+      }
+
+      .final__content h2 em {
+        font-family: "Playfair Display", serif;
+
+        font-style: normal;
+
+        font-weight: 600;
+      }
+
+      .final__button {
+        min-height: 54px;
+
+        padding: 0 20px;
+
+        display: inline-flex;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 11px;
+
+        flex-shrink: 0;
+
+        background: var(--ink);
+
+        color: white;
+
+        font-size: 11px;
+
+        font-weight: 800;
+
+        white-space: nowrap;
+
+        transition:
+          background 160ms ease;
+      }
+
+      .final__button:hover {
+        background: var(--forest);
+      }
+
+
+      /* =====================================================
+         FOOTER
+      ====================================================== */
+
+      .footer {
+        background: var(--ink);
+
+        color: white;
+      }
+
+      .footer__main {
+        padding:
+          76px
+          0
+          70px;
+
+        display: grid;
+
+        grid-template-columns:
+          minmax(0, 1fr)
+          170px
+          170px;
+
+        gap: 70px;
+      }
+
+      .brand--footer .brand__word {
+        color: white;
+      }
+
+      .brand--footer .brand__symbol i:first-child {
+        background: white;
+      }
+
+      .brand--footer .brand__symbol i:nth-child(2) {
+        background: var(--coral);
+      }
+
+      .brand--footer .brand__symbol i:nth-child(3) {
+        background: #71978a;
+      }
+
+      .footer__identity p {
+        max-width: 340px;
+
+        margin: 23px 0 0;
+
+        color:
+          rgba(255, 255, 255, 0.45);
+
+        font-size: 13px;
+
+        line-height: 1.7;
+      }
+
+      .footer__group {
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+      }
+
+      .footer__group > span {
+        margin-bottom: 17px;
+
+        color:
+          rgba(255, 255, 255, 0.3);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 7px;
+
+        letter-spacing: 0.08em;
+      }
+
+      .footer__group a {
+        margin-bottom: 11px;
+
+        color:
+          rgba(255, 255, 255, 0.67);
+
+        font-size: 12px;
+      }
+
+      .footer__group a:hover {
+        color: white;
+      }
+
+      .footer__bottom {
+        min-height: 65px;
+
+        display: grid;
+
+        grid-template-columns:
+          1fr
+          1fr
+          1fr;
+
+        align-items: center;
+
+        border-top:
+          1px solid
+          rgba(255, 255, 255, 0.1);
+
+        color:
+          rgba(255, 255, 255, 0.28);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 7px;
+
+        letter-spacing: 0.06em;
+      }
+
+      .footer__bottom span:nth-child(2) {
+        text-align: center;
+      }
+
+      .footer__bottom span:last-child {
+        text-align: right;
+      }
+
+
+      /* =====================================================
+         FLOATING REPORT
+      ====================================================== */
+
+      .floating-report {
+        position: fixed;
+
+        right: 24px;
+        bottom: 22px;
+
+        z-index: 120;
+
+        min-height: 58px;
+
+        padding:
+          7px
+          12px
+          7px
+          9px;
+
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 10px;
+
+        background: var(--forest);
+
+        color: white;
+
+        box-shadow:
+          0 13px 28px
+          rgba(0, 0, 0, 0.18);
+
+        transition:
+          background 160ms ease,
+          transform 160ms ease;
+      }
+
+      .floating-report:hover {
+        background: #245347;
+
+        transform: translateY(-2px);
+      }
+
+      .floating-report > svg {
+        color: var(--coral-soft);
+      }
+
+      .floating-report > span {
+        display: grid;
+
+        gap: 3px;
+      }
+
+      .floating-report small {
+        color:
+          rgba(255, 255, 255, 0.46);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 6px;
+
+        letter-spacing: 0.06em;
+      }
+
+      .floating-report strong {
+        font-size: 11px;
+
+        font-weight: 800;
+      }
+
+
+      /* =====================================================
+         1100
+      ====================================================== */
+
+      @media (max-width: 1100px) {
+        .desktop-nav {
+          gap: 22px;
+        }
+
+        .hero__inner {
+          grid-template-columns:
+            42px
+            minmax(0, 1fr)
+            minmax(250px, 0.4fr);
+
+          column-gap: 25px;
+        }
+
+        .hero__main {
+          padding-right: 0;
+        }
+
+        .hero__lower {
+          grid-template-columns: 1fr;
+          gap: 25px;
+        }
+
+        .hero__actions {
+          justify-content: flex-start;
+        }
+
+        .service-row {
+          grid-template-columns:
+            65px
+            48px
+            180px
+            minmax(0, 1fr)
+            35px;
+
+          column-gap: 17px;
+        }
+
+        .material__content {
+          gap: 55px;
+        }
+      }
+
+
+      /* =====================================================
+         900
+      ====================================================== */
+
+      @media (max-width: 900px) {
+        .page-width {
+          width: min(
+            calc(100% - 34px),
+            var(--page)
+          );
+        }
+
+        .desktop-nav {
+          display: none;
+        }
+
+        .header__location {
+          display: none;
+        }
+
+        .menu-button {
+          display: inline-flex;
+        }
+
+        .mobile-nav.mobile-nav--open {
+          display: block;
+        }
+
+        .hero__inner {
+          min-height: auto;
+
+          grid-template-columns: 1fr;
+
+          gap: 0;
+        }
+
+        .hero__rail {
+          display: none;
+        }
+
+        .hero__main {
+          padding:
+            78px
+            0
+            72px;
+        }
+
+        .hero__visual {
+          min-height: 330px;
+
+          margin:
+            0
+            0
+            30px;
+        }
+
+        .hero__visual-word {
+          writing-mode: horizontal-tb;
+
+          transform: none;
+
+          margin-left: 0;
+        }
+
+        .hero__visual-mark {
+          right: 44px;
+        }
+
+        .intro__grid,
+        .section-head,
+        .coverage__head,
+        .material__grid,
+        .principles__head,
+        .method__intro {
+          grid-template-columns: 1fr;
+
+          gap: 24px;
+        }
+
+        .intro {
+          padding: 95px 0;
+        }
+
+        .intro__note {
+          max-width: 280px;
+        }
+
+        .services,
+        .method,
+        .coverage,
+        .material,
+        .principles {
+          padding: 95px 0;
+        }
+
+        .service-row {
+          min-height: 120px;
+
+          grid-template-columns:
+            55px
+            48px
+            minmax(120px, 0.5fr)
+            minmax(0, 1fr)
+            28px;
+        }
+
+        .method__steps {
+          grid-template-columns: 1fr;
+        }
+
+        .method__steps article {
+          min-height: 235px;
+
+          border-right: 0;
+
+          border-bottom:
+            1px solid
+            rgba(255, 255, 255, 0.12);
+        }
+
+        .method__steps article:last-child {
+          border-bottom: 0;
+        }
+
+        .material__content {
+          grid-template-columns: 1fr;
+
+          gap: 55px;
+        }
+
+        .principle-list {
+          grid-template-columns: 1fr;
+        }
+
+        .principle {
+          min-height: 220px;
+
+          border-right: 0;
+
+          border-bottom:
+            1px solid
+            var(--line);
+
+          padding:
+            25px
+            0
+            30px;
+        }
+
+        .principle + .principle {
+          padding-left: 0;
+        }
+
+        .principle:last-child {
+          border-bottom: 0;
+        }
+
+        .footer__main {
+          grid-template-columns:
+            1fr
+            1fr
+            1fr;
+
+          gap: 45px;
+        }
+
+        .final__content {
+          align-items: flex-start;
+
+          flex-direction: column;
+
+          gap: 35px;
+        }
+      }
+
+
+      /* =====================================================
+         700
+      ====================================================== */
+
+      @media (max-width: 700px) {
+        .page-width {
+          width: min(
+            calc(100% - 26px),
+            var(--page)
+          );
+        }
+
+        .hero__main {
+          padding:
+            62px
+            0
+            58px;
+        }
+
+        .hero h1 {
+          font-size: clamp(
+            48px,
+            13vw,
+            68px
+          );
+        }
+
+        .hero__lower p {
+          font-size: 14px;
+        }
+
+        .hero__actions {
+          width: 100%;
+
+          flex-direction: column;
+
+          align-items: stretch;
+        }
+
+        .hero-button {
+          width: 100%;
+        }
+
+        .hero__visual {
+          min-height: 300px;
+
+          padding: 22px;
+        }
+
+        .hero__visual-word {
+          font-size: 58px;
+        }
+
+        .hero__visual-mark {
+          width: 95px;
+          height: 95px;
+
+          right: 28px;
+        }
+
+        .ticker__inner {
+          grid-template-columns:
+            repeat(3, 1fr);
+
+          row-gap: 0;
+        }
+
+        .ticker__inner span {
+          min-height: 42px;
+
+          display: grid;
+          place-items: center;
+        }
+
+        .ticker__inner span:nth-child(4) {
+          border-left: 0;
+        }
+
+        .intro,
+        .services,
+        .method,
+        .coverage,
+        .material,
+        .principles {
+          padding: 78px 0;
+        }
+
+        .intro__copy h2,
+        .section-head__copy h2,
+        .coverage__head h2,
+        .material__intro h2,
+        .principles__head h2,
+        .method__intro h2 {
+          font-size: 43px;
+        }
+
+        .intro__description {
+          grid-template-columns: 1fr;
+
+          gap: 18px;
+        }
+
+        .service-row {
+          min-height: auto;
+
+          grid-template-columns:
+            35px
+            44px
+            minmax(0, 1fr)
+            24px;
+
+          gap: 12px;
+
+          padding:
+            19px
+            0;
+        }
+
+        .service-row__title {
+          font-size: 20px;
+        }
+
+        .service-row__text {
+          display: none;
+        }
+
+        .service-row:hover {
+          padding-inline: 0;
+
+          background: transparent;
+        }
+
+        .area-table {
+          overflow-x: auto;
+        }
+
+        .area-table__head,
+        .area-table__row {
+          min-width: 690px;
+        }
+
+        .material__row {
+          grid-template-columns:
+            45px
+            minmax(0, 1fr)
+            55px
+            25px;
+
+          gap: 12px;
+        }
+
+        .final {
+          padding-top: 22px;
+        }
+
+        .final__inner {
+          min-height: 380px;
+
+          padding:
+            26px
+            0
+            45px;
+        }
+
+        .final__top {
+          gap: 20px;
+        }
+
+        .final__top span:last-child {
+          display: none;
+        }
+
+        .final__content h2 {
+          font-size: 52px;
+        }
+
+        .final__button {
+          width: 100%;
+        }
+
+        .footer__main {
+          grid-template-columns: 1fr 1fr;
+
+          gap: 42px;
+        }
+
+        .footer__identity {
+          grid-column: 1 / -1;
+        }
+
+        .footer__bottom {
+          min-height: auto;
+
+          grid-template-columns: 1fr;
+
+          gap: 8px;
+
+          padding:
+            18px 0
+            88px;
+        }
+
+        .footer__bottom span:nth-child(2),
+        .footer__bottom span:last-child {
+          text-align: left;
+        }
+
+        .floating-report {
+          left: 12px;
+          right: 12px;
+          bottom: 12px;
+        }
+
+        .floating-report > span {
+          flex: 1;
+        }
+      }
+
+
+      /* =====================================================
+         480
+      ====================================================== */
+
+      @media (max-width: 480px) {
+        .brand__word {
+          font-size: 14px;
+        }
+
+        .hero__main {
+          padding:
+            53px
+            0
+            48px;
+        }
+
+        .eyebrow {
+          font-size: 8px;
+        }
+
+        .hero h1 {
+          font-size: 45px;
+
+          line-height: 0.94;
+        }
+
+        .hero__visual {
+          min-height: 250px;
+        }
+
+        .hero__visual-word {
+          font-size: 46px;
+        }
+
+        .hero__visual-mark {
+          width: 75px;
+          height: 75px;
+
+          right: 22px;
+        }
+
+        .hero__visual-bottom {
+          gap: 9px;
+        }
+
+        .section-index {
+          flex-direction: row;
+
+          align-items: center;
+
+          gap: 9px;
+        }
+
+        .intro__copy h2,
+        .section-head__copy h2,
+        .coverage__head h2,
+        .material__intro h2,
+        .principles__head h2,
+        .method__intro h2 {
+          font-size: 39px;
+        }
+
+        .service-row {
+          grid-template-columns:
+            28px
+            40px
+            minmax(0, 1fr)
+            20px;
+        }
+
+        .service-row__icon {
+          width: 40px;
+          height: 40px;
+        }
+
+        .service-row__title {
+          font-size: 18px;
+        }
+
+        .method__steps article {
+          min-height: 220px;
+        }
+
+        .method__steps h3 {
+          margin-top: 58px;
+          font-size: 26px;
+        }
+
+        .material__row strong {
+          font-size: 16px;
+        }
+
+        .principle h3 {
+          margin-top: 55px;
+          font-size: 25px;
+        }
+
+        .final__content h2 {
+          font-size: 46px;
+        }
+
+        .footer__main {
+          padding-top: 58px;
+        }
+      }
+    </style>
+  </body>
+</html>
