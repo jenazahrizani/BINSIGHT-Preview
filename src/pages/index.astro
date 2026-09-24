@@ -1,4 +1,4 @@
----
+﻿---
 const previews = [
   {
     id: "01",
@@ -51,21 +51,21 @@ const previews = [
   },
   {
     id: "08",
-    title: "Update Preview — SVG",
+    title: "Update Preview â€” SVG",
     description: "Eksperimen lanjutan pada sistem visual, terutama ikonografi dan elemen SVG.",
     date: "23 SEP 2026",
     route: "/previews/preview-08",
   },
   {
     id: "09",
-    title: "Update Preview — Version 2",
+    title: "Update Preview â€” Version 2",
     description: "Iterasi desain lanjutan dengan penyempurnaan layout dan visual interface.",
     date: "23 SEP 2026",
     route: "/previews/preview-09",
   },
   {
     id: "10",
-    title: "Update Preview — Latest",
+    title: "Update Preview â€” Latest",
     description: "Versi preview terbaru untuk eksplorasi arah visual BINSIGHT berikutnya.",
     date: "23 SEP 2026",
     route: "/previews/preview-10",
@@ -101,6 +101,28 @@ const previews = [
 ];
 
 const currentYear = new Date().getFullYear();
+
+const BASE_URL = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
+
+const siteHref = (path: string) => {
+  if (
+    path.startsWith("http://") ||
+    path.startsWith("https://") ||
+    path.startsWith("mailto:") ||
+    path.startsWith("tel:") ||
+    path.startsWith("#") ||
+    path.startsWith("data:") ||
+    path.startsWith("javascript:")
+  ) {
+    return path;
+  }
+
+  if (path === "/") {
+    return `${BASE_URL}/`;
+  }
+
+  return `${BASE_URL}${path.startsWith("/") ? path : `/${path}`}/`;
+};
 ---
 
 <!doctype html>
@@ -113,7 +135,7 @@ const currentYear = new Date().getFullYear();
       content="BINSIGHT preview navigation."
     />
     <meta name="theme-color" content="#f5f4ee" />
-    <title>BINSIGHT — Preview</title>
+    <title>BINSIGHT â€” Preview</title>
 
     <style>
       :root {
@@ -346,7 +368,7 @@ const currentYear = new Date().getFullYear();
   <body>
     <main class="page">
       <header class="header">
-        <a class="brand" href="/">BINSIGHT</a>
+        <a class="brand" href={siteHref("/")}>BINSIGHT</a>
         <div class="header-meta">Preview Navigation / {currentYear}</div>
       </header>
 
@@ -366,7 +388,7 @@ const currentYear = new Date().getFullYear();
 
       <nav class="list" aria-label="Daftar preview BINSIGHT">
         {previews.map((preview) => (
-          <a class="item" href={preview.route}>
+          <a class="item" href={siteHref(preview.route)}>
             <span class="item-number">{preview.id}</span>
 
             <span class="item-content">
@@ -375,15 +397,16 @@ const currentYear = new Date().getFullYear();
             </span>
 
             <span class="item-date">{preview.date}</span>
-            <span class="item-route">OPEN ↗</span>
+            <span class="item-route">OPEN â†—</span>
           </a>
         ))}
       </nav>
 
       <footer class="footer">
-        <span>BINSIGHT — Badung Waste Intelligence</span>
+        <span>BINSIGHT â€” Badung Waste Intelligence</span>
         <span>14 Previews</span>
       </footer>
     </main>
   </body>
 </html>
+
